@@ -1,0 +1,33 @@
+/* =====================================================================
+   C&C — Profile overlay (dossier drawer)
+   ===================================================================== */
+.ov{ position:fixed; inset:0; z-index:200; pointer-events:none; }
+.ov.open{ pointer-events:auto; }
+.ov-backdrop{ position:absolute; inset:0; background:rgba(8,7,5,0.55); backdrop-filter:blur(3px); opacity:0; transition:opacity .5s var(--ease); }
+.ov.open .ov-backdrop{ opacity:1; }
+.ov-panel{ position:absolute; inset:0; left:auto; width:min(1100px,100%); background:var(--ink); color:var(--on-ink);
+  display:flex; flex-direction:column; overflow:hidden; transform:translateX(102%); transition:transform .7s var(--ease);
+  box-shadow:-40px 0 120px rgba(0,0,0,0.5); }
+.ov.open .ov-panel{ transform:none; }
+.ov-bar{ display:flex; align-items:center; justify-content:space-between; padding:20px clamp(24px,4vw,64px); border-bottom:1px solid var(--line-ink); }
+.ov-nav{ display:flex; align-items:center; gap:6px; }
+.ov-dot{ display:flex; align-items:center; justify-content:center; border:1px solid var(--line-ink); padding:0 14px; height:40px; transition:all .4s var(--ease); }
+.ov-dot .label{ font-size:10px; color:var(--on-ink-faint); transition:color .4s; }
+.ov-dot:hover{ border-color:var(--gold-soft); }
+.ov-dot.on{ background:var(--gold-deep); border-color:var(--gold-deep); }
+.ov-dot.on .label{ color:#fff; }
+.ov-close{ margin-left:14px; display:flex; align-items:center; gap:9px; padding:10px 16px; border:1px solid var(--line-ink); transition:all .4s var(--ease); }
+.ov-close span:first-child{ font-family:var(--mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--on-ink-soft); }
+.ov-x{ color:var(--gold-soft); }
+.ov-close:hover{ border-color:var(--gold-soft); }
+.ov-scroll{ overflow-y:auto; overflow-x:hidden; flex:1; }
+.pfc{ padding:clamp(40px,6vw,80px) var(--gutter) clamp(60px,8vw,110px); }
+.pfc-head{ display:grid; grid-template-columns:0.7fr 1.3fr; gap:clamp(28px,4vw,64px); align-items:center; padding-bottom:clamp(40px,5vw,64px); border-bottom:1px solid var(--line-ink); }
+.pfc-portrait{ position:relative; max-width:320px; aspect-ratio:4/5; }
+.pfc-portrait image-slot{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.pfc-creds{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+.pfc-mail{ display:inline-block; margin-top:14px; font-family:var(--mono); font-size:13px; letter-spacing:0.04em; color:var(--gold-soft); border-bottom:1px solid rgba(199,177,134,0.35); padding-bottom:3px; transition:border-color .3s var(--ease),color .3s var(--ease); }
+.pfc-mail:hover{ color:var(--on-ink); border-color:var(--on-ink); }
+.cred{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; color:var(--on-ink-soft); border:1px solid var(--line-ink); padding:7px 12px; }
+.pfc-bio{ max-width:52rem; padding-top:clamp(36px,4vw,56px); }
+@media (max-width:820px){ .ov-panel{ width:100%; } .ov-close span:first-child{ display:none; } .pfc-head{ grid-template-columns:1fr; } .pfc-portrait{ max-width:220px; } }

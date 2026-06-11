@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C&amp;C Asset Advisors — Real estate advisory for clients who think long-term</title>
+  <meta name="description" content="C&C Asset Advisors — a boutique Dallas–Fort Worth real estate advisory firm. One ecosystem, three disciplines: Residential, Private Investment, and Commercial.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/sections.css">
+  <link rel="stylesheet" href="assets/overlay.css">
+
+  <!-- Three.js as a global (UMD) build — inlined natively when bundled offline -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+  <template id="__bundler_thumbnail" data-bg-color="#15130F">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1200" height="800" fill="#15130F"></rect>
+      <g fill="none" stroke="rgba(199,177,134,0.16)" stroke-width="2">
+        <path d="M0 266H1200M0 533H1200M400 0V800M800 0V800"></path>
+      </g>
+      <text x="600" y="392" fill="#EDE6D7" font-family="Georgia, serif" font-size="200" font-weight="500" text-anchor="middle" letter-spacing="-6">C<tspan fill="#C7B186" font-style="italic">&amp;</tspan>C</text>
+      <text x="600" y="500" fill="rgba(237,230,215,0.6)" font-family="Arial, sans-serif" font-size="30" letter-spacing="14" text-anchor="middle">ASSET ADVISORS</text>
+    </svg>
+  </template>
+</head>
+<body>
+  <div id="poster"></div>
+  <canvas id="world"></canvas>
+
+  <nav class="nav" id="nav"></nav>
+  <main class="page" id="page"></main>
+  <div class="ov" id="overlay"></div>
+
+  <div class="boot" id="boot"><div class="m">C<i>&amp;</i>C</div></div>
+
+  <script src="js/image-slot.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/scene-lib.js"></script>
+  <script src="js/three-scenes.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Lift boot splash once the page is built and (ideally) the world has rendered.
+    (function () {
+      var done = false;
+      function lift() {
+        if (done) return; done = true;
+        var b = document.getElementById("boot");
+        if (b) { b.classList.add("gone"); setTimeout(function () { b.remove(); }, 850); }
+      }
+      var tries = 0;
+      (function check() {
+        var w = window.CCWorld && window.CCWorld.instance;
+        if ((w && w.frames > 0) || tries > 40) lift();
+        else { tries++; setTimeout(check, 60); }
+      })();
+      window.addEventListener("load", function () { setTimeout(lift, 1400); });
+    })();
+  </script>
+</body>
+</html>
