@@ -1072,7 +1072,10 @@ class World {
   constructor(canvas) {
     this.canvas = canvas;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance", preserveDrawingBuffer: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // cap device pixel ratio lower on phones — a fixed fullscreen WebGL canvas at
+    // 3x DPR is the main source of mobile jank/battery drain
+    const _maxDPR = (window.matchMedia && window.matchMedia("(max-width: 860px)").matches) ? 1.5 : 2;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, _maxDPR));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;

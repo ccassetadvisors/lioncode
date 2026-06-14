@@ -155,11 +155,14 @@ html.anim-ok .reveal.d5{ transition-delay:.40s; } html.anim-ok .reveal.d6{ trans
 .nav-burger{ display:none; flex-direction:column; gap:5px; padding:8px; }
 .nav-burger span{ width:24px; height:1.5px; background:currentColor; transition:all .4s var(--ease); }
 @media (max-width:920px){
-  .nav-links{ position:fixed; inset:0; background:var(--ink); color:var(--on-ink); flex-direction:column; justify-content:center; gap:22px; padding:90px var(--gutter) 40px; overflow-y:auto;
-    transform:translateY(-100%); visibility:hidden; pointer-events:none;
-    transition:transform .5s var(--ease), visibility .5s var(--ease); z-index:130; }
+  .nav-links{ position:fixed; top:0; left:0; right:0; background:rgba(21,19,15,0.97); backdrop-filter:blur(18px); color:var(--on-ink);
+    flex-direction:column; align-items:stretch; justify-content:flex-start; gap:0;
+    padding:74px var(--gutter) 26px; border-bottom:1px solid var(--line-ink); max-height:100svh; overflow-y:auto;
+    transform:translateY(-101%); visibility:hidden; pointer-events:none;
+    transition:transform .42s var(--ease), visibility .42s var(--ease); z-index:125; }
   .nav-links.open{ transform:none; visibility:visible; pointer-events:auto; }
-  .nav-links .nav-link{ font-size:24px; font-family:var(--serif); opacity:1; }
+  .nav-links .nav-link{ font-size:19px; font-family:var(--serif); opacity:1; padding:13px 2px; border-top:1px solid var(--line-ink); text-align:left; }
+  .nav-links .nav-cta{ margin-top:18px; text-align:center; }
   .nav-burger{ display:flex; z-index:140; }
   .nav-burger.open span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
   .nav-burger.open span:nth-child(2){ opacity:0; }
@@ -272,11 +275,20 @@ html.anim-ok .hero-line.in{ opacity:1; transform:none; }
 @media (max-width:860px){
   .division{ height:auto; }
   .division .pin{ height:auto; min-height:auto; position:relative; padding-block:0; display:block; }
-  .div-stage{ position:relative; inset:auto; opacity:1; transform:none; pointer-events:auto; padding-block:clamp(64px,12vh,110px); min-height:60vh; }
-  .div-stage.s-title{ min-height:100svh; }
+  /* one strong hero panel, then content-height points/services — far less scroll */
+  .div-stage{ position:relative; inset:auto; opacity:1; transform:none; pointer-events:auto; padding-block:clamp(48px,9vh,84px); min-height:auto; }
+  .div-stage.s-title{ min-height:76svh; padding-block:clamp(60px,12vh,100px); }
   .div-scroll-hint{ display:none; }
   .div-points{ grid-template-columns:1fr; }
   .div-serve-grid{ grid-template-columns:1fr; gap:30px; }
+  /* graduated, stronger veils so full-width text stays legible over the 3D */
+  .div-warm .veil{ background:linear-gradient(180deg, rgba(22,16,9,0.5) 0%, rgba(22,16,9,0.74) 38%, rgba(22,16,9,0.9) 100%); }
+  .div-dark .veil{ background:linear-gradient(180deg, rgba(8,7,5,0.5) 0%, rgba(8,7,5,0.74) 38%, rgba(8,7,5,0.9) 100%); }
+  .div-cool .veil{ background:linear-gradient(180deg, rgba(12,16,18,0.5) 0%, rgba(12,16,18,0.74) 38%, rgba(12,16,18,0.9) 100%); }
+  .div-light .veil{ background:linear-gradient(180deg, rgba(246,242,234,0.6) 0%, rgba(246,242,234,0.86) 40%, rgba(246,242,234,0.96) 100%); }
+  /* cheaper, more legible cards (no blur over WebGL on phones) */
+  .div-point{ backdrop-filter:none; background:rgba(10,8,5,0.82); }
+  .div-light .div-point{ backdrop-filter:none; background:rgba(252,250,245,0.95); }
 }
 
 /* =====================================================================

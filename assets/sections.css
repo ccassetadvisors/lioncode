@@ -211,7 +211,11 @@ a.ct-tel{ transition:color .3s var(--ease); } a.ct-tel:hover{ color:var(--gold-s
 /* ---------- Commercial "what we handle" — push the hub graphic + CTA right ---------- */
 .div-cool .div-serve-grid{ grid-template-columns:1fr 0.92fr; gap:clamp(44px,6vw,112px); }
 .div-cool .div-cta-card{ padding-left:clamp(16px,3.5vw,64px); }
-@media (max-width:860px){ .div-cool .div-cta-card{ padding-left:0; } }
+@media (max-width:860px){
+  .div-cool .div-serve-grid{ grid-template-columns:1fr; gap:32px; }
+  .div-cool .div-cta-card{ padding-left:0; }
+  .net{ width:100%; margin:0 auto; }
+}
 
 /* Contact gold glow (depth) */
 #contact::after{ content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
@@ -361,13 +365,13 @@ body.deep-open .page{ display:none; }
 .nav.on-light .nav-menu-link:hover{ color:var(--gold-deep); background:rgba(156,132,86,0.08); }
 .nav-menu-link:hover::before{ opacity:1; transform:none; }
 @media (max-width:920px){
-  /* Practice reads as a small label heading its three division links */
-  .nav-has-menu{ flex-direction:column; gap:14px; padding-bottom:20px; margin-bottom:2px; border-bottom:1px solid var(--line-ink); }
+  /* Practice reads as a small label heading its three indented division links */
+  .nav-has-menu{ flex-direction:column; align-items:stretch; gap:0; }
   .nav-has-menu::after{ display:none; }
-  .nav-links .nav-link-top{ font-family:var(--mono); font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--on-ink-faint); opacity:1; }
+  .nav-links .nav-link-top{ font-family:var(--mono); font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--on-ink-faint); opacity:1; padding:15px 2px 6px; border-top:1px solid var(--line-ink); }
   .nav-menu{ position:static; opacity:1; visibility:visible; transform:none; background:none;
-    backdrop-filter:none; border:none; padding:0; min-width:0; gap:14px; align-items:center; }
-  .nav-menu-link{ font-family:var(--serif); font-size:22px; opacity:.95; padding:0; color:var(--on-ink); }
+    backdrop-filter:none; border:none; padding:0; min-width:0; gap:0; align-items:stretch; }
+  .nav-menu-link{ font-family:var(--serif); font-size:19px; opacity:.95; padding:10px 2px 10px 18px; color:var(--on-ink); }
   .nav-menu-link::before{ display:none; }
   .nav-caret{ display:none; }
 }
@@ -378,6 +382,15 @@ body.deep-open .page{ display:none; }
 /* never let wide media (the Reunion Tower video) force horizontal scroll */
 .ins-feature > *{ min-width:0; }
 .ins-feature-img, .ins-video{ min-width:0; max-width:100%; }
+/* the long sample-edition link is descriptive, not a compact CTA — let it wrap */
+.ins-sample .link-u{ white-space:normal; }
+@media (max-width:600px){
+  .link-u{ white-space:normal; } /* prevent any long link from overflowing */
+  /* tighter vertical rhythm so the (necessarily long) mobile scroll flows better */
+  .section-pad{ padding-block:clamp(56px,14vw,96px); }
+  .section-pad-sm{ padding-block:clamp(44px,11vw,72px); }
+  .interstitial{ padding-block:clamp(56px,14vw,104px); }
+}
 @media (max-width:760px){
   /* keep oversized editorial flourishes from crowding small screens */
   .ghost-num{ font-size:clamp(72px,24vw,120px); opacity:.28; top:-0.4em; }
