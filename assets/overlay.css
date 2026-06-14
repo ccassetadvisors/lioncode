@@ -21,7 +21,14 @@
 .ov-x{ color:var(--gold-soft); }
 .ov-close:hover{ border-color:var(--gold-soft); }
 .ov-scroll{ overflow-y:auto; overflow-x:hidden; flex:1; }
-.pfc{ padding:clamp(40px,6vw,80px) var(--gutter) clamp(60px,8vw,110px); }
+.pfc{ position:relative; padding:clamp(40px,6vw,80px) var(--gutter) clamp(60px,8vw,110px); }
+/* architectural drawing-sheet texture behind the dossier bio */
+.pfc::before{ content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:.6;
+  background-image:linear-gradient(var(--line-ink) 1px,transparent 1px),linear-gradient(90deg,var(--line-ink) 1px,transparent 1px),linear-gradient(rgba(237,230,215,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(237,230,215,0.05) 1px,transparent 1px);
+  background-size:clamp(64px,7vw,110px) clamp(64px,7vw,110px),clamp(64px,7vw,110px) clamp(64px,7vw,110px),22px 22px,22px 22px;
+  -webkit-mask-image:radial-gradient(ellipse 95% 80% at 72% 12%,#000,transparent 78%);
+  mask-image:radial-gradient(ellipse 95% 80% at 72% 12%,#000,transparent 78%); }
+.pfc-head,.pfc-bio{ position:relative; z-index:1; }
 .pfc-head{ display:grid; grid-template-columns:0.7fr 1.3fr; gap:clamp(28px,4vw,64px); align-items:center; padding-bottom:clamp(40px,5vw,64px); border-bottom:1px solid var(--line-ink); }
 .pfc-portrait{ position:relative; max-width:320px; aspect-ratio:4/5; }
 .pfc-portrait image-slot{ position:absolute; inset:0; width:100%; height:100%; display:block; }

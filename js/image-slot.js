@@ -264,6 +264,7 @@
       this._depth = 0;
       this._gen = 0;
       this._view = { s: 1, x: 0, y: 0 };
+      this._failed = new Set();
       this._subFn = () => this._render();
       // Shadow-DOM listeners live with the shadow DOM — bound once here so
       // disconnect/reconnect (e.g. React remount) doesn't stack handlers.
@@ -286,6 +287,12 @@
       // naturalWidth/Height aren't known until load — re-apply so the cover
       // baseline is computed from real dimensions, not the 100%×100% fallback.
       this._img.addEventListener('load', () => this._applyView());
+      // A missing/broken src (e.g. a portrait that hasn't been added yet) falls
+      // back to the styled placeholder instead of a broken-image icon.
+      this._img.addEventListener('error', () => {
+        const bad = this._img.getAttribute('src');
+        if (bad && !/^data:/i.test(bad)) { this._failed.add(bad); this._render(); }
+      });
       // Gated on editable + fit=cover so share links and contain/fill slots
       // stay static.
       this.addEventListener('dblclick', (e) => {
@@ -605,7 +612,9 @@
       if (stored && stored.u && !/^data:image\//i.test(stored.u)) stored = null;
       const srcAttr = this.getAttribute('src') || '';
       this._userUrl = (stored && stored.u) || null;
-      const url = this._userUrl || srcAttr;
+      let url = this._userUrl || srcAttr;
+      // A src that previously failed to load resolves to empty → placeholder.
+      if (url && !/^data:/i.test(url) && this._failed && this._failed.has(url)) url = '';
       // Don't clobber an in-flight reframe with a store-triggered re-render.
       if (!this.hasAttribute('data-reframe')) {
         this._view = {

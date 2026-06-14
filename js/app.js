@@ -43,10 +43,13 @@
         <span class="brand-sub">Asset<br>Advisors</span>
       </a>
       <div class="nav-links" id="navLinks">
-        <a href="#practice" class="nav-link">Practice</a>
-        <a href="#team" class="nav-link">Team</a>
-        <a href="#philosophy" class="nav-link">Approach</a>
-        <a href="#insights" class="nav-link">Perspective</a>
+        <div class="nav-item nav-has-menu">
+          <a href="#practice" class="nav-link nav-link-top">Practice <span class="nav-caret" aria-hidden="true">▾</span></a>
+          <div class="nav-menu">${CC.DIVISIONS.map((d) => `<a href="#/${d.id}" class="nav-menu-link">${d.name}</a>`).join("")}</div>
+        </div>
+        <a href="#/team" class="nav-link">Team</a>
+        <a href="#/approach" class="nav-link">Approach</a>
+        <a href="#/perspective" class="nav-link">Perspective</a>
         <a href="#contact" class="nav-cta">Contact</a>
       </div>
       <button class="nav-burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>`;
@@ -204,12 +207,20 @@
     const ov = document.getElementById("overlay");
     const team = CC.TEAM;
     let openIdx = -1;
+    const initials = (full) => full.split(/\s+/).map((w) => w[0] || "").join("").slice(0, 2).toUpperCase();
     const render = (i) => {
       const p = team[i];
       ov.querySelector(".ov-body").innerHTML = `
         <div class="wrap pfc">
           <div class="pfc-head">
-            <div class="pfc-portrait"><image-slot id="portrait-${p.id}" shape="rect" src="assets/img/portrait-${p.id}.jpg" placeholder="Drop ${p.name}'s portrait"></image-slot></div>
+            <div class="pfc-portrait">
+              <div class="portrait-ph" aria-hidden="true">
+                <span class="portrait-ph-kicker">C<i>&amp;</i>C Asset Advisors</span>
+                <span class="portrait-ph-mono">${initials(p.fullName)}</span>
+                <span class="portrait-ph-name">${p.fullName}</span>
+              </div>
+              <image-slot class="portrait-slot" id="portrait-${p.id}" shape="rect" src="assets/img/portrait-${p.id}.jpg" placeholder="Drop ${p.name}'s portrait"></image-slot>
+            </div>
             <div class="pfc-intro">
               <span class="kicker" style="color:var(--gold-soft)">${p.focus}</span>
               <h2 class="h1" style="color:var(--on-ink);margin:14px 0 6px">${p.fullName}</h2>
@@ -293,6 +304,7 @@
     };
 
     function update() {
+      if (document.body.classList.contains("deep-open")) return; // deep page owns the world
       const vh = window.innerHeight;
       const mid = window.scrollY + vh * 0.5;
 
@@ -314,8 +326,8 @@
       const ar = active.el.getBoundingClientRect();
       if (world) world.setActive(ar.bottom > 0 && ar.top < vh);
 
-      // division stage cross-dissolve
-      if (active.el.classList.contains("division")) setStages(active.el, p);
+      // stages now stack in normal flow — keep them all visible
+      if (active.el.classList.contains("division")) setStages(active.el);
 
       // nav appearance: solid after scroll; light text over paper sections
       nav.classList.toggle("solid", window.scrollY > 80);
@@ -324,18 +336,11 @@
       nav.classList.toggle("on-light", navOverPaper);
     }
 
-    function setStages(section, p) {
-      const stages = section.querySelectorAll(".div-stage"); // [title, points, serve]
-      // mobile stacks all stages — keep them all visible
-      if (!window.matchMedia("(min-width:861px)").matches) {
-        stages.forEach((s) => { s.style.opacity = ""; s.style.pointerEvents = ""; });
-        return;
-      }
-      const ss = (x, a, b) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-      const aP = ss(p, 0.30, 0.42);   // title -> points
-      const aS = ss(p, 0.64, 0.76);   // points -> serve
-      const o = [1 - aP, aP * (1 - aS), aS];
-      stages.forEach((s, i) => { s.style.opacity = o[i].toFixed(3); s.style.pointerEvents = o[i] > 0.5 ? "auto" : "none"; });
+    function setStages(section) {
+      // Stages stack in normal flow at every width now — no pin, no scroll-jack.
+      // All three (title, points, services) stay visible; the WebGL scene still
+      // animates with scroll via setProgress as the division passes through.
+      section.querySelectorAll(".div-stage").forEach((s) => { s.style.opacity = ""; s.style.pointerEvents = ""; });
     }
 
     function isPaperAtTop() {

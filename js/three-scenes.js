@@ -6,6 +6,32 @@
    gracefully. Uses the global THREE (UMD build).
    ===================================================================== */
 
+/* Prefilterable environment: a 2:1 equirect canvas (sky → horizon → ground,
+   with an optional soft sun) fed to the renderer's PMREM generator for
+   image-based lighting. Approximates each room's surrounding luminance so
+   reflective surfaces (metal, glass, water, polished stone) pick up on-palette
+   reflections instead of rendering flat. */
+function equirectEnv({ top, horizon, bottom, sun, sunX = 0.5, sunY = 0.32, sunSize = 0.16 } = {}) {
+  const W = 512, H = 256;
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  const g = x.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, top || "#888888");
+  g.addColorStop(0.5, horizon || "#aaaaaa");
+  g.addColorStop(1, bottom || "#333333");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  if (sun) {
+    const sx = sunX * W, sy = sunY * H, r = sunSize * H;
+    const rg = x.createRadialGradient(sx, sy, 0, sx, sy, r);
+    rg.addColorStop(0, sun); rg.addColorStop(1, "rgba(0,0,0,0)");
+    x.fillStyle = rg; x.beginPath(); x.arc(sx, sy, r, 0, Math.PI * 2); x.fill();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.mapping = THREE.EquirectangularReflectionMapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 /* =====================================================================
    HERO — abstract architecture: a sweeping colonnade of slender fins,
    gold edge-light, drifting datum lines, reflected in a dark floor.
@@ -118,6 +144,7 @@ function buildHero() {
   return {
     scene,
     exposure: 1.05,
+    env: { top: "#241d12", horizon: "#3a2c18", bottom: "#0a0805", sun: "rgba(220,186,128,0.85)", sunX: 0.5, sunY: 0.42, sunSize: 0.24, intensity: 0.85 },
     from: { pos: [0, 1.8, 22], tgt: [0, 4.2, -12] },
     to: { pos: [4, 3.4, 10], tgt: [-3, 6, -24] },
     update(dt, t) {
@@ -141,7 +168,7 @@ function buildResidential() {
 
   // ---- materials
   const oakTex = woodTexture({ base: "#dcc8a2", dark: "#b5946a", light: "#efdfc0", planks: 8 }); oakTex.repeat.set(5, 5);
-  const oakMat = new THREE.MeshStandardMaterial({ map: oakTex, roughness: 0.5 });
+  const oakMat = new THREE.MeshPhysicalMaterial({ map: oakTex, roughness: 0.42, metalness: 0.0, clearcoat: 0.38, clearcoatRoughness: 0.5 });
   const plasterTex = plasterTexture({}); plasterTex.repeat.set(2, 1);
   const wallMat = new THREE.MeshStandardMaterial({ map: plasterTex, roughness: 0.96 });
   const walnutTex = woodTexture({ base: "#5e4129", dark: "#33200f", light: "#7f5836" });
@@ -153,7 +180,8 @@ function buildResidential() {
   const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xf2faf8, roughness: 0.03, metalness: 0, transparent: true, opacity: 0.07, side: THREE.DoubleSide });
 
   // ---- light: high clear midday sun streaming in through the glazing
-  scene.add(new THREE.HemisphereLight(0xfdfaf1, 0xc9bb9f, 0.95));
+  // (hemisphere eased back — the environment map now supplies sky ambience)
+  scene.add(new THREE.HemisphereLight(0xfdfaf1, 0xc9bb9f, 0.6));
   const sun = new THREE.DirectionalLight(0xfff1d6, 2.3);
   sun.position.set(-10, 19, -24);
   sun.castShadow = true;
@@ -201,7 +229,8 @@ function buildResidential() {
 
   // ---- elk shoulder mount above the fireplace (stylized, commanding)
   const deer = new THREE.Group();
-  const boneMat = new THREE.MeshStandardMaterial({ color: 0xcfc2aa, roughness: 0.7 });
+  // dark, rich bronzed-walnut antlers — high contrast against the cream wall
+  const boneMat = new THREE.MeshStandardMaterial({ color: 0x271a0f, roughness: 0.38, metalness: 0.32 });
   const furMat = new THREE.MeshStandardMaterial({ color: 0x7a5234, roughness: 0.95 });
   const maneMat = new THREE.MeshStandardMaterial({ color: 0x4f3a28, roughness: 1 });
   const furLight = new THREE.MeshStandardMaterial({ color: 0xa3784f, roughness: 0.95 });
@@ -220,29 +249,38 @@ function buildResidential() {
   [-1, 1].forEach((s) => {
     const ear = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 8), furLight);
     ear.scale.set(0.5, 1, 0.3); ear.position.set(0.58, 1.46, s * 0.34); ear.rotation.x = s * 0.7; deer.add(ear);
-    // elk antlers: connected polyline beams sweeping up & back, forward tines (6x6 rack)
+    // elk antlers: thick, wide 6-point rack sweeping up & back — the focal mount
     const bone = (a, b, r1, r2) => {
       const va = new THREE.Vector3(a[0], a[1], a[2] * s), vb = new THREE.Vector3(b[0], b[1], b[2] * s);
       const dir = vb.clone().sub(va), len = dir.length();
-      const m = new THREE.Mesh(new THREE.CylinderGeometry(r2, r1, len, 7), boneMat);
+      const m = new THREE.Mesh(new THREE.CylinderGeometry(r2, r1, len, 12), boneMat);
       m.position.copy(va.clone().add(vb).multiplyScalar(0.5));
       m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
-      deer.add(m);
+      m.castShadow = true; deer.add(m);
+      const joint = new THREE.Mesh(new THREE.SphereGeometry(r1 * 1.04, 8, 6), boneMat);
+      joint.position.copy(va); joint.castShadow = true; deer.add(joint);
     };
-    // main beam waypoints (x fwd, y up, z out)
+    // main beam waypoints (x fwd, y up, z out) — biased up & out so the rack
+    // clears the wall behind the mount (no back-poke through the plaster)
     const P = [
-      [0.72, 1.46, 0.15], [0.58, 1.95, 0.38], [0.32, 2.5, 0.55],
-      [-0.15, 2.95, 0.66], [-0.85, 3.2, 0.72], [-1.55, 3.22, 0.74]
+      [0.72, 1.5, 0.26], [0.82, 2.12, 0.66], [0.78, 2.78, 1.06],
+      [0.62, 3.35, 1.36], [0.4, 3.75, 1.5], [0.18, 3.95, 1.56]
     ];
-    for (let k = 0; k < P.length - 1; k++) bone(P[k], P[k + 1], 0.062 - k * 0.008, 0.054 - k * 0.008);
-    bone([0.7, 1.58, 0.2], [1.22, 2.0, 0.3], 0.034, 0.015);   // brow tine
-    bone(P[1], [1.08, 2.42, 0.45], 0.034, 0.015);             // bez tine
-    bone(P[2], [0.82, 3.05, 0.6], 0.034, 0.015);              // trez tine
-    bone(P[3], [0.3, 3.58, 0.7], 0.034, 0.015);               // royal point
-    bone(P[4], [-0.5, 3.95, 0.76], 0.032, 0.014);             // sword point
+    for (let k = 0; k < P.length - 1; k++) bone(P[k], P[k + 1], 0.125 - k * 0.013, 0.108 - k * 0.013);
+    bone([0.72, 1.62, 0.32], [1.5, 2.2, 0.5], 0.058, 0.022);   // brow tine
+    bone(P[1], [1.45, 2.78, 0.96], 0.052, 0.02);               // bez tine
+    bone(P[2], [1.3, 3.45, 1.28], 0.05, 0.02);                 // trez tine
+    bone(P[3], [1.0, 3.9, 1.48], 0.048, 0.018);                // royal point
+    bone(P[4], [0.55, 4.1, 1.56], 0.044, 0.016);               // sword point
+    bone(P[4], [0.12, 3.98, 1.6], 0.04, 0.015);                // extra fork
   });
   deer.traverse((o) => { if (o.isMesh) o.castShadow = true; });
   deer.position.set(-14.76, 5.45, -3); scene.add(deer);
+  // tight accent light to rim the dark rack without washing the wall behind it
+  const mountLight = new THREE.SpotLight(0xfff1d6, 26, 15, 0.45, 0.6, 1.5);
+  mountLight.position.set(-10.5, 8.6, -1.4);
+  mountLight.target.position.set(-14.9, 6.6, -3);
+  scene.add(mountLight, mountLight.target);
 
   // right wall + credenza + art
   const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 10.5), wallMat.clone());
@@ -303,7 +341,7 @@ function buildResidential() {
 
   // ---- luxury pool with tanning ledge + raised spa
   const waterTex = waterTexture({});
-  const waterMat = new THREE.MeshStandardMaterial({ map: waterTex, roughness: 0.12, metalness: 0.1, emissive: 0x9adbe0, emissiveMap: waterTex, emissiveIntensity: 0.22 });
+  const waterMat = new THREE.MeshPhysicalMaterial({ map: waterTex, roughness: 0.07, metalness: 0.0, emissive: 0x5fb6c4, emissiveMap: waterTex, emissiveIntensity: 0.13, clearcoat: 0.7, clearcoatRoughness: 0.12 });
   const water = new THREE.Mesh(new THREE.PlaneGeometry(13, 8), waterMat);
   water.rotation.x = -Math.PI / 2; water.position.set(5.5, 0.05, -23); scene.add(water);
   const ledge = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 7.6), new THREE.MeshStandardMaterial({ color: 0xa9dde2, roughness: 0.2, emissive: 0x8fd2d8, emissiveIntensity: 0.18 }));
@@ -462,12 +500,24 @@ function buildResidential() {
   lounge(-6.2, -4.5, -0.5);
   lounge(6.4, -4.2, 0.5);
 
-  // globe pendant over the coffee table
-  const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 3.6, 6), blackMetal);
-  cord.position.set(0, 8.6, -3.2); scene.add(cord);
-  const globe = new THREE.Mesh(new THREE.SphereGeometry(0.55, 20, 16), new THREE.MeshStandardMaterial({ color: 0xf6efe0, roughness: 0.6, emissive: 0xfff3da, emissiveIntensity: 0.45 }));
-  globe.position.set(0, 6.65, -3.2); scene.add(globe);
-  const globeLight = new THREE.PointLight(0xfff0d2, 0.35, 18); globeLight.position.set(0, 6.5, -3.2); scene.add(globeLight);
+  // refined mid-century brass pendant cluster over the coffee table
+  const brassMat = new THREE.MeshStandardMaterial({ color: 0xb89968, roughness: 0.3, metalness: 0.9 });
+  const bulbMat = new THREE.MeshStandardMaterial({ color: 0xfff3da, roughness: 0.25, emissive: 0xffe7bc, emissiveIntensity: 0.95 });
+  const pendant = new THREE.Group();
+  const ceilY = 10.4;
+  const ccanopy = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.12, 0.06, 16), brassMat);
+  ccanopy.position.set(0, ceilY, -3.2); pendant.add(ccanopy);
+  [[-0.58, 6.95, -3.5, 0.25], [0.46, 6.4, -3.0, 0.32], [0.06, 7.3, -2.95, 0.2]].forEach(([gx, gy, gz, r]) => {
+    const cordH = ceilY - gy;
+    const cd = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, cordH, 6), blackMetal);
+    cd.position.set(gx, gy + cordH / 2, gz); pendant.add(cd);
+    const fit = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.045, 0.13, 12), brassMat);
+    fit.position.set(gx, gy + r + 0.04, gz); pendant.add(fit);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(r, 22, 18), bulbMat.clone());
+    bulb.position.set(gx, gy, gz); pendant.add(bulb);
+  });
+  scene.add(pendant);
+  const pendantLight = new THREE.PointLight(0xffe6bc, 16, 17, 2); pendantLight.position.set(0, 6.7, -3.2); scene.add(pendantLight);
 
   // plant by the glazing
   const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.5, 1.2, 16), cream);
@@ -494,8 +544,35 @@ function buildResidential() {
   const motes = makeMotes(110, { x: 26, y: 11, z: 24 }, 0xfff0d2, 0.06);
   motes.position.set(-2, 3, -2); scene.add(motes);
 
+  // =================== layered lighting — interior + exterior accents ==========
+  // warm interior downlights — pools over the seating (no shadow casting, for perf)
+  function downlight(x, z, intensity, dist) {
+    const sp = new THREE.SpotLight(0xfff0d6, intensity, dist, 0.6, 0.7, 1.5);
+    sp.position.set(x, 10.2, z); sp.target.position.set(x, 0, z);
+    scene.add(sp, sp.target);
+  }
+  downlight(0, 1.5, 130, 17);      // over the sofa
+  downlight(-6.2, -4.5, 90, 16);   // lounge left
+  downlight(6.4, -4.2, 90, 16);    // lounge right
+  downlight(0, -3.2, 70, 15);      // coffee table (with the pendant)
+  // credenza + art wall wash
+  const artWash = new THREE.SpotLight(0xffe9c8, 58, 16, 0.5, 0.7, 1.4);
+  artWash.position.set(12.5, 9, 1); artWash.target.position.set(15.7, 4, 1);
+  scene.add(artWash, artWash.target);
+  // warm grazing across the plaster (architectural wall light)
+  const wallGraze = new THREE.PointLight(0xffe9cf, 42, 24, 1.6); wallGraze.position.set(9, 7.6, -8); scene.add(wallGraze);
+  // fireplace firelight (flickers in update)
+  const fireLight = new THREE.PointLight(0xff7e36, 20, 11, 2); fireLight.position.set(-14.3, 1.7, -3); scene.add(fireLight);
+
+  // exterior accents — subtle in daylight, add depth & realism
+  const spaLight = new THREE.PointLight(0xa9dde2, 13, 8, 2); spaLight.position.set(-3.8, 0.7, -20.2); scene.add(spaLight);
+  const fireBowlLight = new THREE.PointLight(0xff7a30, 18, 10, 2); fireBowlLight.position.set(-16.5, 0.7, -33); scene.add(fireBowlLight);
+  const treeUp = new THREE.SpotLight(0xcfe0a8, 40, 17, 0.6, 0.7, 1.4); treeUp.position.set(-9.5, 0.3, -24); treeUp.target.position.set(-9.5, 7.5, -25); scene.add(treeUp, treeUp.target);
+  [[-2, -36.4], [4, -36.4], [10, -36.4]].forEach(([px, pz]) => { const pl = new THREE.PointLight(0xffd9a0, 7, 6, 2); pl.position.set(px, 0.95, pz + 1.1); scene.add(pl); });
+
   return {
-    scene, exposure: 1.22,
+    scene, exposure: 0.95,
+    env: { top: "#9fbad6", horizon: "#e0e4dc", bottom: "#cdc7b6", sun: "rgba(255,244,214,0.9)", sunX: 0.2, sunY: 0.22, sunSize: 0.22, intensity: 0.5 },
     from: { pos: [11.5, 5.8, 12.5], tgt: [-4, 4.2, -6] },
     to: { pos: [-2, 4.7, 2.5], tgt: [5, 3.0, -24] },
     update(dt, t, p = 0) {
@@ -503,6 +580,9 @@ function buildResidential() {
       motes.rotation.y = t * 0.02;
       waterTex.offset.x = t * 0.006; waterTex.offset.y = t * 0.004;
       ember.material.opacity = 0.38 + Math.sin(t * 2.4) * 0.1 + Math.sin(t * 7.3) * 0.04;
+      fireLight.intensity = 20 + Math.sin(t * 7.3) * 5 + Math.sin(t * 13.1) * 2.5;
+      fireBowlLight.intensity = 18 + Math.sin(t * 6.1) * 4;
+      pendantLight.intensity = 16 + Math.sin(t * 0.9) * 0.7;
       // sliding doors glide open as the section scrolls
       const o = clamp((p - 0.04) / 0.62, 0, 1);
       const s = o * o * (3 - 2 * o);
@@ -583,17 +663,31 @@ function buildInvestment() {
   table.position.set(0, 1.4, 0); table.castShadow = true; table.receiveShadow = true; scene.add(table);
   [-7, 7].forEach((bx) => { const b = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.4, 3.4), chrome); b.position.set(bx, 0.7, 0); b.castShadow = true; scene.add(b); });
 
-  // ---- executive chairs
+  // ---- executive chairs (realistic proportions: seat below the table, tilted
+  //      ergonomic back, chrome gas column + 5-star caster base)
   function chair(x, z, faceLeft) {
     const g = new THREE.Group();
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.4, 1.7), leather); seat.position.y = 1.35;
-    const back = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.4, 0.35), leather); back.position.set(0, 2.4, faceLeft ? 0.75 : -0.75); back.rotation.x = faceLeft ? 0.08 : -0.08;
-    const head = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 0.42), leather); head.position.set(0, 3.75, faceLeft ? 0.86 : -0.86);
-    const armL = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.5, 1.5), leather); armL.position.set(-0.95, 1.85, 0);
-    const armR = armL.clone(); armR.position.x = 0.95;
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1.2, 10), chrome); stem.position.y = 0.7;
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.12, 5), chrome); base.position.y = 0.12;
-    g.add(seat, back, head, armL, armR, stem, base);
+    const dir = faceLeft ? 1 : -1; // back sits away from the table
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.2, 1.45), leather); seat.position.set(0, 0.95, 0);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(1.42, 1.5, 0.2), leather);
+    back.position.set(0, 1.78, dir * 0.6); back.rotation.x = dir * 0.14;
+    const head = new THREE.Mesh(new THREE.BoxGeometry(1.22, 0.4, 0.22), leather);
+    head.position.set(0, 2.5, dir * 0.74); head.rotation.x = dir * 0.14;
+    [-0.78, 0.78].forEach((sx) => {
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.11, 1.2), leather); arm.position.set(sx, 1.18, 0);
+      const sup = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.34, 0.08), steel); sup.position.set(sx, 1.0, -0.1);
+      g.add(arm, sup);
+    });
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 0.74, 14), chrome); stem.position.y = 0.45;
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.1, 14), chrome); hub.position.y = 0.1;
+    g.add(seat, back, head, stem, hub);
+    for (let i = 0; i < 5; i++) {
+      const a = i * Math.PI * 2 / 5;
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.07, 0.13), chrome);
+      leg.position.set(Math.cos(a) * 0.33, 0.07, Math.sin(a) * 0.33); leg.rotation.y = -a; g.add(leg);
+      const caster = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.09, 10), steel);
+      caster.rotation.x = Math.PI / 2; caster.position.set(Math.cos(a) * 0.62, 0.06, Math.sin(a) * 0.62); g.add(caster);
+    }
     shadowAll(g);
     g.position.set(x, 0, z); scene.add(g);
   }
@@ -673,6 +767,7 @@ function buildInvestment() {
 
   return {
     scene, exposure: 1.14,
+    env: { top: "#14110d", horizon: "#4a3823", bottom: "#0e0b08", sun: "rgba(255,214,154,0.9)", sunX: 0.5, sunY: 0.5, sunSize: 0.32, intensity: 1.0 },
     from: { pos: [14, 5.0, 13], tgt: [1, 2.6, 0] },
     to: { pos: [-3, 3.2, 9], tgt: [6, 2.4, -1] },
     update(dt, t) {
@@ -692,7 +787,8 @@ function buildCommercial() {
   scene.background = new THREE.Color(0xccd3d5);
   scene.fog = new THREE.Fog(0xccd3d5, 26, 110);
 
-  scene.add(new THREE.HemisphereLight(0xe6edef, 0x7d8287, 1.15));
+  // (hemisphere eased back — the overcast environment map now adds sky fill)
+  scene.add(new THREE.HemisphereLight(0xe6edef, 0x7d8287, 0.7));
   const sun = new THREE.DirectionalLight(0xf3eee2, 1.7);
   sun.position.set(16, 26, 12); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
@@ -767,11 +863,11 @@ function buildCommercial() {
     ]);
   });
 
-  // orange safety netting on two upper bays
-  const netMat = new THREE.MeshBasicMaterial({ color: 0xd17a3a, transparent: true, opacity: 0.35, side: THREE.DoubleSide, depthWrite: false });
-  [[-SPAN * 1.5, 3], [SPAN * 0.5, 4]].forEach(([nx, lv]) => {
-    const net = new THREE.Mesh(new THREE.PlaneGeometry(SPAN, FH * 0.8), netMat);
-    net.position.set(nx, lv * FH + FH * 0.45, hd + 0.1); struct.add(net);
+  // continuous orange debris screening across the open upper floors' street face
+  const netMat = new THREE.MeshBasicMaterial({ color: 0xc46a30, transparent: true, opacity: 0.26, side: THREE.DoubleSide, depthWrite: false });
+  [3, 4].forEach((lv) => {
+    const net = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.3, FH * 0.94), netMat);
+    net.position.set(0, lv * FH + FH * 0.47, hd + 0.13); struct.add(net);
   });
 
   // rebar cluster + column starter bars on the top deck
@@ -823,7 +919,7 @@ function buildCommercial() {
   }
   const front = new THREE.Group();
   for (let lv = 0; lv < LEVELS; lv++) for (let i = 0; i < BX; i++) {
-    const glazed = lv < LEVELS - 2 && !(i === BX - 1 && lv === LEVELS - 3);
+    const glazed = lv < LEVELS - 2;
     front.add(glazeBay((i - BX / 2) * SPAN + SPAN / 2, lv * FH, SPAN, FH, glazed));
   }
   front.position.z = hd; struct.add(front);
@@ -956,7 +1052,8 @@ function buildCommercial() {
   motes.position.y = 8; scene.add(motes);
 
   return {
-    scene, exposure: 1.08,
+    scene, exposure: 0.9,
+    env: { top: "#aab4ba", horizon: "#c8ccd0", bottom: "#8f9598", sun: null, intensity: 0.5 },
     from: { pos: [32, 6, 36], tgt: [0, 11, 0] },
     to: { pos: [16, 26, 27], tgt: [-4, 13, -5] },
     update(dt, t) {
@@ -980,6 +1077,11 @@ class World {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // Prefiltered image-based lighting — gives metals, glass, water and polished
+    // floors real reflections + soft ambient instead of flat shading.
+    this.pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.pmrem.compileEquirectangularShader();
 
     this.camera = new THREE.PerspectiveCamera(46, 1, 0.1, 300);
     this.builders = { hero: buildHero, residential: buildResidential, investment: buildInvestment, commercial: buildCommercial };
@@ -1010,8 +1112,32 @@ class World {
   }
 
   ensure(key) {
-    if (!this.scenes[key]) this.scenes[key] = this.builders[key]();
+    if (!this.scenes[key]) {
+      this.scenes[key] = this.builders[key]();
+      this._applyEnv(this.scenes[key]);
+    }
     return this.scenes[key];
+  }
+
+  // Build a prefiltered environment from the scene's tonal spec and apply it as
+  // image-based lighting + a per-scene reflection intensity. Purely additive —
+  // a failure here must never stop the scene from rendering.
+  _applyEnv(s) {
+    if (!s || s._envApplied) return;
+    s._envApplied = true;
+    if (!s.env || !this.pmrem) return;
+    try {
+      const eq = equirectEnv(s.env);
+      const rt = this.pmrem.fromEquirectangular(eq);
+      s.scene.environment = rt.texture;
+      eq.dispose();
+      const ei = s.env.intensity == null ? 1 : s.env.intensity;
+      s.scene.traverse((o) => {
+        if (!o.isMesh || !o.material) return;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach((m) => { if ("envMapIntensity" in m) m.envMapIntensity = ei; });
+      });
+    } catch (e) { /* env is an enhancement; ignore */ }
   }
 
   setScene(key) {

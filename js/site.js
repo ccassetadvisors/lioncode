@@ -6,6 +6,14 @@
   const page = document.getElementById("page");
   const esc = (s) => s.replace(/&/g, "&amp;");
   const pad = (i) => String(i + 1).padStart(2, "0");
+  const initials = (full) => full.split(/\s+/).map((w) => w[0] || "").join("").slice(0, 2).toUpperCase();
+  // Branded portrait placeholder shown until a real photo is dropped in.
+  const portraitPH = (p) => `
+        <div class="portrait-ph" aria-hidden="true">
+          <span class="portrait-ph-kicker">C<i>&amp;</i>C Asset Advisors</span>
+          <span class="portrait-ph-mono">${initials(p.fullName)}</span>
+          <span class="portrait-ph-name">${esc(p.fullName)}</span>
+        </div>`;
 
   /* ---------------- HERO ---------------- */
   function heroHTML() {
@@ -57,7 +65,7 @@
 
   /* section heading with roman ghost numeral — architectural drawing-sheet rhythm */
   function secHead(kicker, num) {
-    return `<div class="sec-head reveal"><span class="kicker-dot"></span><span class="kicker">${kicker}</span><span class="sec-rule"></span><span class="sec-num serif italic">${num}</span></div>`;
+    return `<div class="sec-wrap"><span class="ghost-num serif" aria-hidden="true">${num}</span><div class="sec-head reveal"><span class="kicker-dot"></span><span class="kicker">${kicker}</span><span class="sec-rule"></span><span class="sec-num serif italic">${num}</span></div></div>`;
   }
 
   /* ---------------- THESIS ---------------- */
@@ -74,9 +82,9 @@
       <div class="wrap">
         ${secHead("Our conviction", "I")}
         <div class="thesis-top">
-          <h2 class="h1 measure-lg reveal">One advisor for every kind of <span class="serif italic gold-text">real estate decision.</span></h2>
+          <h2 class="h1 measure-lg reveal">One firm for the whole arc of <span class="serif italic gold-text">ownership.</span></h2>
           <div class="reveal d2">
-            <p class="body-lg">${esc(CC.ARC_INTRO)}</p>
+            <p class="body-lg dropcap">${esc(CC.ARC_INTRO)}</p>
             <p class="body-lg" style="margin-top:16px">The home you live in and the assets you build are rarely separate decisions. We advise on both — and stay through all of it.</p>
           </div>
         </div>
@@ -142,9 +150,10 @@
       </div>`).join("");
     const serves = d.services.map((s, i) => `<li><span class="sn serif italic">${RN[i]}</span>${esc(s)}</li>`).join("");
     const net = d.network ? networkArt(d.network) : "";
-    const ctaHead = net
-      ? `<h3 class="h3" style="margin:22px 0 18px">${esc(d.cta)}.</h3>`
-      : `<h3 class="h2" style="margin-bottom:24px">${esc(d.cta)}.</h3>`;
+    // No CTA heading (it duplicated the button). A short, division-specific
+    // invitation for the non-network cards; the hub caption leads on commercial.
+    const INVITE = { residential: "Let’s find the right one.", investment: "Let’s look at the numbers." };
+    const ctaLead = net ? "" : `<p class="div-cta-lead">${esc(INVITE[d.id] || "")}</p>`;
     return `
     <section class="division ${THEME[d.theme]}" data-world="${d.world}" id="div-${d.id}" data-screen-label="${esc(d.name)}">
       <div class="pin">
@@ -175,7 +184,7 @@
               </div>
               <div class="div-cta-card">
                 ${net}
-                ${ctaHead}
+                ${ctaLead}
                 <a href="#contact" class="btn btn-solid" data-prefill="${d.id}">${esc(d.cta)} <span class="arrow">→</span></a>
               </div>
             </div>
@@ -197,7 +206,7 @@
   function teamHTML() {
     const cards = CC.TEAM.map((p, i) => `
       <article class="pcard reveal d${i + 1}" data-person="${p.id}" tabindex="0" role="button" aria-label="Open ${esc(p.fullName)} profile">
-        <div class="pcard-photo"><image-slot id="portrait-${p.id}" shape="rect" src="assets/img/portrait-${p.id}.jpg" placeholder="Drop ${esc(p.name)}'s portrait"></image-slot></div>
+        <div class="pcard-photo">${portraitPH(p)}<image-slot class="portrait-slot" id="portrait-${p.id}" shape="rect" src="assets/img/portrait-${p.id}.jpg" placeholder="Drop ${esc(p.name)}'s portrait"></image-slot></div>
         <div class="pcard-body">
           <span class="pcard-name">${esc(p.name)}</span>
           <span class="pcard-title label">${esc(p.title)}</span>
@@ -207,12 +216,13 @@
         </div>
       </article>`).join("");
     return `
-    <section id="team" class="section-pad paper-arch" style="background:var(--paper-2)" data-screen-label="The team">
+    <section id="team" class="section-pad paper-arch paper-team" data-screen-label="The team">
       <div class="wrap">
         ${secHead("The team", "II")}
         <div class="team-top">
           <h2 class="h1 measure-lg reveal">One table.<br>The whole <span class="serif italic gold-text">firm</span> behind it.</h2>
-          <div class="reveal d2"><p class="body-lg">${esc(CC.TEAM_INTRO)}</p></div>
+          <div class="reveal d2"><p class="body-lg dropcap">${esc(CC.TEAM_INTRO)}</p>
+            <a href="#/team" class="link-u" style="margin-top:18px">Read the full team page <span class="arrow">→</span></a></div>
         </div>
         <div class="team-grid">${cards}</div>
         <div class="team-note reveal"><span class="label" style="color:var(--taupe)">And a wider bench</span><p class="lede measure-lg" style="margin-top:14px">${esc(CC.TEAM_NOTE)}</p></div>
@@ -222,17 +232,12 @@
 
   /* ---------------- PHILOSOPHY ---------------- */
   function philosophyHTML() {
-    const items = CC.STANDARD.map((t, i) => `
-      <div class="std-item reveal d${i + 1}"><span class="std-num">${t.k}</span><h3 class="h3">${esc(t.t)}</h3><p class="body">${esc(t.d)}</p></div>`).join("");
     return `
     <section id="philosophy" class="section-pad paper-section paper-arch" data-screen-label="How we operate">
       <div class="wrap">
         ${secHead("How we operate", "III")}
-        <div class="std-statement reveal"><p class="h2">${esc(CC.STANDARD_STATEMENT).replace("built to last", '<span class="serif italic gold-text">built to last</span>')}</p></div>
-        <div class="std-grid">${items}</div>
-        <div class="std-close reveal"><p class="lede pull" style="max-width:34rem">${esc(CC.STANDARD_CLOSE)
-          .replace("telos", '<span class="serif italic gold-text">telos</span>')
-          .replace("aligned flourishing.", '<span class="serif italic gold-text" style="border-bottom:1.5px solid var(--line-gold);padding-bottom:2px">aligned flourishing.</span>')}</p></div>
+        <div class="std-statement reveal" style="max-width:64rem"><p class="display" style="font-size:clamp(32px,4.8vw,72px);line-height:1.05">${esc(CC.STANDARD_STATEMENT).replace("built to last", '<span class="serif italic gold-text">built to last</span>')}</p></div>
+        <div class="reveal" style="margin-top:clamp(40px,5vw,72px)"><a href="#/approach" class="link-u">The four standards we operate by <span class="arrow">→</span></a></div>
       </div>
     </section>`;
   }
@@ -272,7 +277,17 @@
               <a href="reports/dfw-intelligence-brief-june-2026.pdf" target="_blank" rel="noopener" class="link-u" style="margin-top:8px">DFW Real Estate Intelligence Brief — residential, commercial &amp; investment <span class="arrow">→</span></a>
             </div>
           </div>
-          <figure class="ins-feature-img reveal d2"><image-slot id="perspective-editorial" shape="rect" src="assets/img/dfw-reunion-tower.jpg" placeholder="Drop an editorial image"></image-slot><figcaption class="label label-sm ins-feature-cap">Reunion Tower — Downtown Dallas</figcaption></figure>
+          <figure class="ins-feature-img ins-feature-video reveal d2">
+            <div class="media-ph" aria-hidden="true">
+              <span class="media-ph-kicker">C<i>&amp;</i>C — Field photography</span>
+              <span class="media-ph-title">Reunion Tower</span>
+              <span class="media-ph-sub">Downtown Dallas</span>
+            </div>
+            <video class="ins-video" autoplay muted loop playsinline preload="auto" aria-label="Reunion Tower, Downtown Dallas">
+              <source src="assets/video/reunion-tower.mp4" type="video/mp4">
+            </video>
+            <figcaption class="label label-sm ins-feature-cap">Reunion Tower — Downtown Dallas</figcaption>
+          </figure>
         </div>
         <div class="ins-request reveal" id="request-brief">
           <div class="ins-req-head">
