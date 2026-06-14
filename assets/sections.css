@@ -361,11 +361,29 @@ body.deep-open .page{ display:none; }
 .nav.on-light .nav-menu-link:hover{ color:var(--gold-deep); background:rgba(156,132,86,0.08); }
 .nav-menu-link:hover::before{ opacity:1; transform:none; }
 @media (max-width:920px){
-  .nav-has-menu{ flex-direction:column; gap:16px; }
+  /* Practice reads as a small label heading its three division links */
+  .nav-has-menu{ flex-direction:column; gap:14px; padding-bottom:20px; margin-bottom:2px; border-bottom:1px solid var(--line-ink); }
   .nav-has-menu::after{ display:none; }
+  .nav-links .nav-link-top{ font-family:var(--mono); font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--on-ink-faint); opacity:1; }
   .nav-menu{ position:static; opacity:1; visibility:visible; transform:none; background:none;
-    backdrop-filter:none; border:none; padding:0; min-width:0; gap:12px; align-items:center; }
-  .nav-menu-link{ font-family:var(--serif); font-size:20px; opacity:.9; padding:0; }
+    backdrop-filter:none; border:none; padding:0; min-width:0; gap:14px; align-items:center; }
+  .nav-menu-link{ font-family:var(--serif); font-size:22px; opacity:.95; padding:0; color:var(--on-ink); }
   .nav-menu-link::before{ display:none; }
   .nav-caret{ display:none; }
+}
+
+/* =====================================================================
+   MOBILE SWEEP — overflow safety + readability
+   ===================================================================== */
+/* never let wide media (the Reunion Tower video) force horizontal scroll */
+.ins-feature > *{ min-width:0; }
+.ins-feature-img, .ins-video{ min-width:0; max-width:100%; }
+@media (max-width:760px){
+  /* keep oversized editorial flourishes from crowding small screens */
+  .ghost-num{ font-size:clamp(72px,24vw,120px); opacity:.28; top:-0.4em; }
+  .deep-ghost{ font-size:clamp(150px,46vw,300px); }
+  .deep-hero .display{ font-size:clamp(44px,12vw,80px); }
+  .deep .section-pad{ padding-block:clamp(60px,13vw,110px); }
+  /* a touch more comfortable reading width/rhythm */
+  .pfc-head{ gap:22px; }
 }
