@@ -166,23 +166,33 @@ function buildResidential() {
   scene.background = new THREE.Color(0xf3eee4);
   scene.fog = new THREE.Fog(0xf3eee4, 38, 130);
 
-  // ---- materials
-  const oakTex = woodTexture({ base: "#dcc8a2", dark: "#b5946a", light: "#efdfc0", planks: 8 }); oakTex.repeat.set(5, 5);
-  const oakMat = new THREE.MeshPhysicalMaterial({ map: oakTex, roughness: 0.42, metalness: 0.0, clearcoat: 0.38, clearcoatRoughness: 0.5 });
-  const plasterTex = plasterTexture({}); plasterTex.repeat.set(2, 1);
+  // ---- materials  (oxblood-&-gold luxury: marble, cedar, walnut, leather, gold)
+  const marbleTex = marbleTexture({ base: "#e8e0d0", vein: "#736a5c", gold: "#bd8b46" }); marbleTex.repeat.set(2.2, 2.2);
+  const marbleMat = new THREE.MeshPhysicalMaterial({ map: marbleTex, roughness: 0.13, metalness: 0, clearcoat: 0.92, clearcoatRoughness: 0.1, envMapIntensity: 1.2 });
+  const plasterTex = plasterTexture({ base: "#cdbfa6", spot: "#bbac8f" }); plasterTex.repeat.set(2, 1);
   const wallMat = new THREE.MeshStandardMaterial({ map: plasterTex, roughness: 0.96 });
-  const walnutTex = woodTexture({ base: "#5e4129", dark: "#33200f", light: "#7f5836" });
-  const walnutMat = new THREE.MeshStandardMaterial({ map: walnutTex, roughness: 0.4, metalness: 0.04 });
-  const slatMat = new THREE.MeshStandardMaterial({ map: woodTexture({ base: "#c9a877", dark: "#9c7a4e", light: "#e0c596" }), roughness: 0.72 });
-  const blackMetal = new THREE.MeshStandardMaterial({ color: 0x26221d, roughness: 0.45, metalness: 0.65 });
+  const walnutTex = woodTexture({ base: "#4f3621", dark: "#281708", light: "#744d2d" });
+  const walnutMat = new THREE.MeshStandardMaterial({ map: walnutTex, roughness: 0.34, metalness: 0.06 });
+  // rich cedar for the ceiling raft + statement niche; lighter oak for the flutes
+  // fluted feature wall — walnut, to match the case goods (one wood story)
+  const fluteMat = new THREE.MeshStandardMaterial({ map: woodTexture({ base: "#5a3f27", dark: "#311e0f", light: "#7c5532", vertical: true }), roughness: 0.4, metalness: 0.04 });
+  // soft goods — ONE upholstery tone shared by the sofa + chairs (greige bouclé)
+  const upholstery = new THREE.MeshStandardMaterial({ color: 0xb4a98f, roughness: 1 });
+  const upholsteryDeep = new THREE.MeshStandardMaterial({ color: 0x9b9078, roughness: 1 });
+  const creamSoft = new THREE.MeshStandardMaterial({ color: 0xdacfb8, roughness: 1 });
+  const gold = new THREE.MeshStandardMaterial({ color: 0xc9a24a, roughness: 0.26, metalness: 0.95 });
+  const brass = gold;   // alias for existing references
+  const darkStoneTex = marbleTexture({ base: "#2b2926", vein: "#6f685c", gold: "#b3895a" }); darkStoneTex.repeat.set(1.4, 2.2);
+  const darkStoneMat = new THREE.MeshStandardMaterial({ map: darkStoneTex, roughness: 0.4, metalness: 0.08 });
+  const blackMetal = new THREE.MeshStandardMaterial({ color: 0x23201b, roughness: 0.45, metalness: 0.7 });
   const cream = new THREE.MeshStandardMaterial({ color: 0xe9e1cd, roughness: 1 });
   const bouclé = new THREE.MeshStandardMaterial({ color: 0xddd3ba, roughness: 1 });
   const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xf2faf8, roughness: 0.03, metalness: 0, transparent: true, opacity: 0.07, side: THREE.DoubleSide });
 
   // ---- light: high clear midday sun streaming in through the glazing
   // (hemisphere eased back — the environment map now supplies sky ambience)
-  scene.add(new THREE.HemisphereLight(0xfdfaf1, 0xc9bb9f, 0.6));
-  const sun = new THREE.DirectionalLight(0xfff1d6, 2.3);
+  scene.add(new THREE.HemisphereLight(0xfdfaf1, 0xc9bb9f, 0.45));
+  const sun = new THREE.DirectionalLight(0xfff1d6, 1.85);
   sun.position.set(-10, 19, -24);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
@@ -191,41 +201,75 @@ function buildResidential() {
   sun.shadow.bias = -0.0004;
   scene.add(sun, sun.target);
   sun.target.position.set(4, 0, 6);
-  const bounce = new THREE.PointLight(0xfff3df, 0.32, 50); bounce.position.set(6, 5, 9); scene.add(bounce);
+  const bounce = new THREE.PointLight(0xfff3df, 0.2, 50); bounce.position.set(6, 5, 9); scene.add(bounce);
 
   // ---- interior shell  (x −16..16 · glazing at z −12 · ceiling 10.5)
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(32, 30), oakMat);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(32, 30), marbleMat);
   floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, 3); floor.receiveShadow = true; scene.add(floor);
 
-  // wood-slat ceiling running toward the view + chunky beams, over a solid substrate
-  const slats = new THREE.Group();
-  const substrate = new THREE.Mesh(new THREE.PlaneGeometry(34, 31), new THREE.MeshStandardMaterial({ color: 0x33271b, roughness: 1 }));
-  substrate.rotation.x = Math.PI / 2; substrate.position.set(0, 10.56, 3);
-  slats.add(substrate);
-  for (let x = -15.8; x <= 15.8; x += 0.62) {
-    const s = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.1, 30), slatMat);
-    s.position.set(x, 10.42, 3);
-    slats.add(s);
-  }
-  [-8, 0, 8].forEach((bx) => {
-    const b = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 30), walnutMat);
-    b.position.set(bx, 10.05, 3); b.castShadow = true;
-    slats.add(b);
+  // modern plaster ceiling: a smooth floating tray with recessed, gold-rimmed
+  // linear light channels (replaces the old wood-slat raft)
+  const ceilMat = new THREE.MeshStandardMaterial({ map: plasterTex.clone(), roughness: 1 });
+  ceilMat.map.repeat.set(3, 3);
+  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(34, 31), ceilMat);
+  ceiling.rotation.x = Math.PI / 2; ceiling.position.set(0, 10.75, 3); ceiling.receiveShadow = true; scene.add(ceiling);
+  const tray = new THREE.Mesh(new THREE.BoxGeometry(27, 0.3, 23), new THREE.MeshStandardMaterial({ map: plasterTex.clone(), roughness: 1 }));
+  tray.position.set(0, 10.42, 3); tray.receiveShadow = true; scene.add(tray);
+  const ledMat = new THREE.MeshBasicMaterial({ color: 0xffe7c2, fog: false });
+  [-6.4, 0, 6.4].forEach((x) => {
+    const slot = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.14, 21), new THREE.MeshStandardMaterial({ color: 0x241f19, roughness: 1 }));
+    slot.position.set(x, 10.3, 1.5); scene.add(slot);
+    const led = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.04, 20.4), ledMat); led.position.set(x, 10.24, 1.5); scene.add(led);
+    [-0.3, 0.3].forEach((dz) => { const e = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.18, 21), gold); e.position.set(x + dz, 10.32, 1.5); scene.add(e); });
   });
-  scene.add(slats);
+  // warm reveal glow along the tray's front & back edges + soft uplight
+  const coveMat = new THREE.MeshBasicMaterial({ color: 0xffe9c6, fog: false });
+  [-8.0, 14.2].forEach((cz) => { const st = new THREE.Mesh(new THREE.BoxGeometry(27, 0.08, 0.1), coveMat); st.position.set(0, 10.3, cz); scene.add(st); });
+  [-6, 6].forEach((z) => { const gl = new THREE.PointLight(0xffe2b0, 4.5, 13, 2); gl.position.set(0, 10.0, z + 3); scene.add(gl); });
 
-  // left wall + ledgestone fireplace
+  // recessed perimeter cove — a warm concealed-LED glow along the wall/ceiling line
+  [-15.55, 15.55].forEach((wx) => {
+    const strip = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 27), new THREE.MeshBasicMaterial({ color: 0xffe9c6, fog: false }));
+    strip.position.set(wx, 9.95, 3); scene.add(strip);
+    [-2, 9].forEach((z) => { const gl = new THREE.PointLight(0xffe1b0, 5, 12, 2); gl.position.set(wx * 0.9, 9.5, z); scene.add(gl); });
+  });
+
+  // left wall + modern linear fireplace in a full-height dark-stone surround
   const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 10.5), wallMat);
   leftWall.position.set(-16, 5.25, 3); leftWall.rotation.y = Math.PI / 2; leftWall.receiveShadow = true; scene.add(leftWall);
-  const stoneTex = ledgestoneTexture({}); stoneTex.repeat.set(1.6, 2.4);
-  const chimney = new THREE.Mesh(new THREE.BoxGeometry(1.1, 10.5, 6), new THREE.MeshStandardMaterial({ map: stoneTex, roughness: 0.95 }));
-  chimney.position.set(-15.4, 5.25, -3); chimney.castShadow = true; chimney.receiveShadow = true; scene.add(chimney);
-  const firebox = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.3, 3.2), new THREE.MeshStandardMaterial({ color: 0x16110c, roughness: 1 }));
-  firebox.position.set(-14.82, 1.5, -3); scene.add(firebox);
-  const ember = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.8), new THREE.MeshBasicMaterial({ color: 0xff9a4a, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
-  ember.rotation.y = Math.PI / 2; ember.position.set(-14.78, 1.35, -3); scene.add(ember);
-  const hearth = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.5, 9), new THREE.MeshStandardMaterial({ map: stoneTex, roughness: 0.9 }));
-  hearth.position.set(-14.9, 0.25, -3); hearth.castShadow = true; hearth.receiveShadow = true; scene.add(hearth);
+  // floor-to-ceiling honed dark-marble feature slab (book-matched look)
+  const surround = new THREE.Mesh(new THREE.BoxGeometry(1.0, 10.5, 7.4), darkStoneMat);
+  surround.position.set(-15.45, 5.25, -3); surround.castShadow = true; surround.receiveShadow = true; scene.add(surround);
+  // crisp brass reveal framing a long, low linear opening
+  const fbW = 5.0, fbH = 1.15, fbY = 2.35, fbX = -14.93;
+  [[fbH / 2 + 0.07, fbW + 0.34, 0.1], [-fbH / 2 - 0.07, fbW + 0.34, 0.1]].forEach(([dy, w]) => {
+    const t = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, w), brass); t.position.set(fbX, fbY + dy, -3); scene.add(t);
+  });
+  [-1, 1].forEach((s) => { const v = new THREE.Mesh(new THREE.BoxGeometry(0.06, fbH + 0.34, 0.1), brass); v.position.set(fbX, fbY, -3 + s * (fbW / 2 + 0.12)); scene.add(v); });
+  // recessed black firebox cavity
+  const firebox = new THREE.Mesh(new THREE.BoxGeometry(0.55, fbH, fbW), new THREE.MeshStandardMaterial({ color: 0x0c0a08, roughness: 1 }));
+  firebox.position.set(-15.0, fbY, -3); scene.add(firebox);
+  const backReflect = new THREE.Mesh(new THREE.PlaneGeometry(fbW, fbH), new THREE.MeshStandardMaterial({ color: 0x161210, roughness: 0.25, metalness: 0.8 }));
+  backReflect.rotation.y = Math.PI / 2; backReflect.position.set(-15.18, fbY, -3); scene.add(backReflect);
+  // glass-media burner bed (a row of dark reflective pebbles)
+  for (let i = 0; i < 16; i++) {
+    const peb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.07 + Math.random() * 0.04, 0), new THREE.MeshStandardMaterial({ color: 0x1a1714, roughness: 0.2, metalness: 0.6 }));
+    peb.position.set(-14.95 + (Math.random() - 0.5) * 0.18, fbY - fbH / 2 + 0.07, -3 + (i / 15 - 0.5) * (fbW - 0.4)); scene.add(peb);
+  }
+  // ribbon flame — emissive plane (flickers in update via `ember`) + tongues
+  const ember = new THREE.Mesh(new THREE.PlaneGeometry(fbW - 0.3, 0.7), new THREE.MeshBasicMaterial({ color: 0xff9a44, transparent: true, opacity: 0.42, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  ember.rotation.y = Math.PI / 2; ember.position.set(-14.86, fbY - 0.2, -3); scene.add(ember);
+  const flames = new THREE.Group();
+  for (let i = 0; i < 9; i++) {
+    const fl = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.5 + Math.random() * 0.35, 6), new THREE.MeshBasicMaterial({ color: 0xffb255, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+    fl.position.set(-14.9, fbY - 0.18, -3 + (i / 8 - 0.5) * (fbW - 0.5)); flames.add(fl);
+  }
+  scene.add(flames);
+  // floating cantilevered hearth bench (light marble, contrasts the dark slab)
+  const hearth = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.34, 5.6), marbleMat);
+  hearth.position.set(-14.55, 0.62, -3); hearth.castShadow = true; hearth.receiveShadow = true; scene.add(hearth);
+  const hearthShadowGap = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.34, 5.6), new THREE.MeshStandardMaterial({ color: 0x161310, roughness: 1 }));
+  hearthShadowGap.position.set(-15.2, 0.3, -3); scene.add(hearthShadowGap);
 
   // ---- elk shoulder mount above the fireplace (stylized, commanding)
   const deer = new THREE.Group();
@@ -275,16 +319,66 @@ function buildResidential() {
     bone(P[4], [0.12, 3.98, 1.6], 0.04, 0.015);                // extra fork
   });
   deer.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  // statement niche behind the elk: a warm, backlit cedar inset framed in gold,
+  // so the dark bronze rack reads as the focal piece against the dark stone slab
+  const niche = new THREE.Mesh(new THREE.BoxGeometry(0.16, 4.7, 2.9), marbleMat);
+  niche.position.set(-14.9, 6.05, -3); niche.receiveShadow = true; scene.add(niche);
+  const nfH = (y) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.09, 3.04), gold); m.position.set(-14.85, y, -3); scene.add(m); };
+  const nfV = (z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.12, 4.78, 0.09), gold); m.position.set(-14.85, 6.05, z); scene.add(m); };
+  nfH(6.05 + 2.39); nfH(6.05 - 2.39); nfV(-3 - 1.52); nfV(-3 + 1.52);
   deer.position.set(-14.76, 5.45, -3); scene.add(deer);
-  // tight accent light to rim the dark rack without washing the wall behind it
-  const mountLight = new THREE.SpotLight(0xfff1d6, 26, 15, 0.45, 0.6, 1.5);
+  // rim the rack + wash the cedar niche so the silhouette separates cleanly
+  const mountLight = new THREE.SpotLight(0xfff1d6, 30, 15, 0.45, 0.6, 1.5);
   mountLight.position.set(-10.5, 8.6, -1.4);
   mountLight.target.position.set(-14.9, 6.6, -3);
   scene.add(mountLight, mountLight.target);
+  const nicheWash = new THREE.SpotLight(0xffd9a0, 26, 12, 0.8, 0.6, 1.3);
+  nicheWash.position.set(-13.3, 4.2, -3); nicheWash.target.position.set(-14.9, 6.6, -3);
+  scene.add(nicheWash, nicheWash.target);
 
-  // right wall + credenza + art
+  // ---- built-in cabinetry flanking the fireplace (walnut carcass, floating
+  // base cabinets with marble tops + gold pulls, backlit open shelving, styling)
+  function builtin(zc) {
+    const g = new THREE.Group();
+    const W = 3.8;
+    const back = new THREE.Mesh(new THREE.BoxGeometry(0.1, 9.4, W), walnutMat); back.position.set(-15.55, 5.0, zc); g.add(back);
+    [-W / 2, W / 2].forEach((s) => { const sd = new THREE.Mesh(new THREE.BoxGeometry(0.95, 9.4, 0.1), walnutMat); sd.position.set(-15.05, 5.0, zc + s); g.add(sd); });
+    // floating lower cabinet + honed-marble counter
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.7, W - 0.12), walnutMat); cab.position.set(-15.06, 1.7, zc); g.add(cab);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.14, W), marbleMat); top.position.set(-15.0, 2.62, zc); top.castShadow = true; g.add(top);
+    [-0.9, 0.9].forEach((pz) => { const pull = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.5), gold); pull.position.set(-14.58, 1.95, zc + pz); g.add(pull); });
+    // open floating shelves
+    [3.7, 5.4, 7.1].forEach((y) => { const sh = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.1, W - 0.14), walnutMat); sh.position.set(-15.07, y, zc); sh.castShadow = true; g.add(sh); });
+    // concealed warm backlight + a slim reveal
+    const bl = new THREE.PointLight(0xffd49a, 5, 7, 2); bl.position.set(-15.0, 5.4, zc); g.add(bl);
+    const reveal = new THREE.Mesh(new THREE.BoxGeometry(0.04, 5.8, 0.05), gold); reveal.position.set(-15.49, 5.4, zc); g.add(reveal);
+    // styling: oxblood vase, stone vessel, stacked books, gold object
+    const vase = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.12, 0.62, 18), darkStoneMat); vase.position.set(-15.0, 4.05, zc - 1.0); g.add(vase);
+    const vessel = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.17, 0.82, 18), darkStoneMat); vessel.position.set(-15.0, 5.85, zc - 0.95); g.add(vessel);
+    const bk = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.26, 0.44), cream); bk.position.set(-15.0, 3.86, zc + 0.95); g.add(bk);
+    const bk2 = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.12, 0.4), creamSoft); bk2.position.set(-15.0, 4.05, zc + 0.92); bk2.rotation.y = 0.12; g.add(bk2);
+    const so = new THREE.Mesh(new THREE.IcosahedronGeometry(0.19, 0), gold); so.position.set(-15.0, 5.55, zc + 0.8); g.add(so);
+    g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+    scene.add(g);
+  }
+  builtin(-9.3);   // street-side of the hearth
+  builtin(3.4);    // inner side of the hearth
+
+  // right wall — a full-height fluted (reeded) white-oak feature wall
   const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 10.5), wallMat.clone());
   rightWall.position.set(16, 5.25, 3); rightWall.rotation.y = -Math.PI / 2; rightWall.receiveShadow = true; scene.add(rightWall);
+  const reeds = new THREE.Group();
+  const reedGeo = new THREE.CylinderGeometry(0.12, 0.12, 10.3, 10);
+  for (let z = -9; z <= 13; z += 0.42) {
+    const r = new THREE.Mesh(reedGeo, fluteMat);
+    r.position.set(15.82, 5.25, z); reeds.add(r);
+  }
+  // slim trim caps top & bottom of the reeding for a finished reveal
+  [0.18, 10.32].forEach((y) => {
+    const t = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, 22.5), walnutMat);
+    t.position.set(15.78, y, 2); reeds.add(t);
+  });
+  scene.add(reeds);
   const credenza = new THREE.Group();
   const cBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.35, 6.5), walnutMat); cBody.position.y = 1.05;
   credenza.add(cBody);
@@ -299,9 +393,10 @@ function buildResidential() {
     v.position.set(0, 1.73 + h / 2, z); v.castShadow = true; credenza.add(v);
   });
   shadowAll(credenza); credenza.position.set(15.1, 0, 1); scene.add(credenza);
-  const artFrame = new THREE.Mesh(new THREE.BoxGeometry(0.14, 3.4, 5), walnutMat); artFrame.position.set(15.9, 6.2, 1); scene.add(artFrame);
-  const artCanvas = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 2.9), new THREE.MeshStandardMaterial({ color: 0xcbbfa0, roughness: 0.85 }));
-  artCanvas.rotation.y = -Math.PI / 2; artCanvas.position.set(15.82, 6.2, 1); scene.add(artCanvas);
+  // framed art mounted proud of the reeding
+  const artFrame = new THREE.Mesh(new THREE.BoxGeometry(0.12, 3.5, 5.1), blackMetal); artFrame.position.set(15.6, 6.2, 1); artFrame.castShadow = true; scene.add(artFrame);
+  const artCanvas = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 2.9), new THREE.MeshStandardMaterial({ map: marbleTexture({ base: "#2a2c33", vein: "#6b7280", gold: "#c7a86f" }), roughness: 0.6, metalness: 0.1 }));
+  artCanvas.rotation.y = -Math.PI / 2; artCanvas.position.set(15.52, 6.2, 1); scene.add(artCanvas);
 
   // ---- glazing wall (z = −12): fixed flanking panes + big sliding glass doors
   const glazing = new THREE.Group();
@@ -401,24 +496,60 @@ function buildResidential() {
   const fireBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.6, 0.55, 16), new THREE.MeshStandardMaterial({ color: 0x35302a, roughness: 0.8 }));
   fireBowl.position.set(-16.5, 0.28, -33); fireBowl.castShadow = true; scene.add(fireBowl);
 
-  // tree
-  const tree = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.5, 7.5, 10), new THREE.MeshStandardMaterial({ color: 0x6e5840, roughness: 1 }));
-  trunk.position.y = 3.75; tree.add(trunk);
-  const folMat = new THREE.MeshStandardMaterial({ color: 0x7d8a59, roughness: 1 });
-  const folMat2 = new THREE.MeshStandardMaterial({ color: 0x8d9a66, roughness: 1 });
-  for (let i = 0; i < 8; i++) {
-    const f = new THREE.Mesh(new THREE.SphereGeometry(1.5 + Math.random() * 0.9, 9, 7), i % 2 ? folMat : folMat2);
-    f.scale.set(1.5, 0.8, 1.5);
-    f.position.set((Math.random() - 0.5) * 4.6, 7.4 + (Math.random() - 0.4) * 2.2, (Math.random() - 0.5) * 4.6);
-    tree.add(f);
+  // ---- planting: low-poly greenery kept to the lawn + a new mulch bed
+  //      (lawn panel is x[-20.5,-6.5] z[-23,-35]; everything else is pavers)
+  const folMat = new THREE.MeshStandardMaterial({ color: 0x7d8a59, roughness: 1 });   // kept for the indoor potted plant
+  const greens = greenPalette();
+  const greensDeep = foliagePalette([0x2f3a1a, 0x3e4a26, 0x4d5b33, 0x5e6e40]);          // ordered dark→light (cypress/hedge)
+  const noShadow = (o) => o.traverse((m) => { m.castShadow = false; });
+
+  // a dark mulch bed along the lawn's back edge, so the hedge + cypress stand
+  // in soil rather than on the pavers
+  const bed = new THREE.Mesh(new THREE.PlaneGeometry(13.4, 2.4), new THREE.MeshStandardMaterial({ color: 0x33291f, roughness: 1 }));
+  bed.rotation.x = -Math.PI / 2; bed.position.set(-13.5, 0.02, -35.7); bed.receiveShadow = true; scene.add(bed);
+
+  // principal shade tree (uplit by treeUp) + a smaller companion — both on the lawn
+  const tree = makeTree({ h: 7.8, trunkR: 0.46, crownR: 2.9, clumps: 20, palette: greens });
+  tree.position.set(-9.8, 0, -26); scene.add(tree);
+  const tree2 = makeTree({ h: 5.3, trunkR: 0.3, crownR: 1.9, clumps: 13, palette: greens });
+  tree2.position.set(-17.6, 0, -31.5); scene.add(tree2);
+
+  // trio of Italian cypress standing in the mulch bed
+  [[-19, -35.6], [-17.2, -36.1], [-15.4, -35.6]].forEach(([cx, cz], i) => {
+    const cyp = makeCypress({ h: 5.8 + (i % 2) * 1.0, r: 0.82, palette: greensDeep });
+    cyp.position.set(cx, 0, cz); scene.add(cyp);
+  });
+
+  // clipped low hedge running through the bed
+  for (let x = -12.6; x <= -6.8; x += 1.55) {
+    const s = makeShrub({ r: 0.9, palette: greensDeep });
+    s.position.set(x, 0, -35.7); s.scale.y = 0.8; scene.add(s);
   }
-  shadowAll(tree); tree.position.set(-9.5, 0, -25); scene.add(tree);
-  // low shrubs along the far wall
-  for (let i = 0; i < 5; i++) {
-    const sh = new THREE.Mesh(new THREE.SphereGeometry(0.8 + Math.random() * 0.5, 8, 6), folMat);
-    sh.scale.y = 0.7; sh.position.set(-15 + i * 7 + Math.random() * 2, 0.55, -35.5);
-    sh.castShadow = true; scene.add(sh);
+
+  // boxwood shrubs on the lawn (never on the pavers)
+  [[-12.8, -24.6], [-16.2, -27.5], [-11.4, -32.8], [-18.6, -24.4]].forEach(([sx, sz]) => {
+    const s = makeShrub({ r: 0.72 + Math.random() * 0.4, palette: greens });
+    s.position.set(sx, 0, sz); scene.add(s);
+  });
+
+  // ornamental grasses (no shadow) + faceted boulders, all on the lawn
+  [[-19, -29], [-14.5, -24], [-8.4, -29.5], [-15.5, -33.5], [-11, -24.2]].forEach(([gx, gz]) => {
+    const t = makeGrassTuft({ h: 1.2 + Math.random() * 0.6, color: 0x8f9a55 });
+    t.position.set(gx, 0, gz); noShadow(t); scene.add(t);
+  });
+  [[-13.2, -25.5, 0.7], [-16.8, -30.5, 0.5], [-8.6, -32, 0.55]].forEach(([bx, bz, br]) => {
+    const b = makeBoulder({ r: br, color: 0x938f86 });
+    b.position.set(bx, br * 0.3, bz); scene.add(b);
+  });
+
+  // low flowering groundcover dabs — confined to the lawn (no shadow)
+  const blooms = foliagePalette([0xc98aa0, 0xd6b25e, 0xb98fbf]);
+  for (let i = 0; i < 12; i++) {
+    const fr = 0.15 + Math.random() * 0.12;
+    const fm = new THREE.Mesh(clumpGeo(), blooms[(Math.random() * blooms.length) | 0]);
+    fm.scale.set(fr, fr * 0.7, fr);
+    fm.position.set(-13.5 + (Math.random() - 0.5) * 11.5, fr * 0.6, -29 + (Math.random() - 0.5) * 9.5);
+    noShadow(fm); scene.add(fm);
   }
 
   // breeze-block screen (mid-century lattice) spanning glazing to garden wall
@@ -452,72 +583,96 @@ function buildResidential() {
   sunGlow.position.set(-26, 30, -86); scene.add(sunGlow);
 
   // ---- furniture
-  const rugTex = rugTexture({});
-  const rug = new THREE.Mesh(new THREE.PlaneGeometry(11.5, 8), new THREE.MeshStandardMaterial({ map: rugTex, roughness: 1 }));
-  rug.rotation.x = -Math.PI / 2; rug.position.set(0, 0.02, -2.5); rug.receiveShadow = true; scene.add(rug);
+  // flat luxury rug — dark field, fine geometric lattice + gold border
+  const rugTex = luxRugTexture({});
+  const rug = new THREE.Mesh(new THREE.PlaneGeometry(13.5, 9.5), new THREE.MeshStandardMaterial({ map: rugTex, roughness: 0.95 }));
+  rug.rotation.x = -Math.PI / 2; rug.position.set(0, 0.02, -2.6); rug.receiveShadow = true; scene.add(rug);
 
   // low-slung sofa facing the courtyard
   const sofa = new THREE.Group();
-  const sFrame = new THREE.Mesh(new THREE.BoxGeometry(8.2, 0.35, 3.2), walnutMat); sFrame.position.y = 0.62; sofa.add(sFrame);
-  const sBack = new THREE.Mesh(new THREE.BoxGeometry(8.2, 1.15, 0.42), walnutMat); sBack.position.set(0, 1.5, 1.42); sofa.add(sBack);
+  const sFrame = new THREE.Mesh(new THREE.BoxGeometry(8.2, 0.35, 3.2), upholsteryDeep); sFrame.position.y = 0.62; sofa.add(sFrame);
+  const sBack = new THREE.Mesh(new THREE.BoxGeometry(8.2, 1.15, 0.42), upholsteryDeep); sBack.position.set(0, 1.5, 1.42); sofa.add(sBack);
   [-2.72, 0, 2.72].forEach((cx) => {
-    const cu = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.5, 2.7), bouclé); cu.position.set(cx, 1.05, -0.1); sofa.add(cu);
-    const bp = new THREE.Mesh(new THREE.BoxGeometry(2.55, 1.05, 0.42), cream); bp.position.set(cx, 1.62, 1.05); bp.rotation.x = -0.12; sofa.add(bp);
+    const cu = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.5, 2.7), upholstery); cu.position.set(cx, 1.05, -0.1); sofa.add(cu);
+    const bp = new THREE.Mesh(new THREE.BoxGeometry(2.55, 1.05, 0.42), upholstery); bp.position.set(cx, 1.62, 1.05); bp.rotation.x = -0.12; sofa.add(bp);
+  });
+  // tonal throw pillows (cream + deeper greige) — calm and in-sync
+  [[-2.5, creamSoft], [0.0, upholsteryDeep], [2.5, creamSoft]].forEach(([px, mat]) => {
+    const pil = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.95, 0.34), mat);
+    pil.position.set(px, 1.46, 0.74); pil.rotation.set(-0.14, px * 0.05, 0.12); pil.castShadow = true; sofa.add(pil);
   });
   [[-3.8, -1.35, 1, 1], [3.8, -1.35, -1, 1], [-3.8, 1.35, 1, -1], [3.8, 1.35, -1, -1]].forEach(([lx, lz, dx, dz]) => {
-    const leg = mcLeg(walnutMat, 0.62, 0.06, 0.03, 0.1, dx, dz);
+    const leg = mcLeg(blackMetal, 0.62, 0.06, 0.03, 0.1, dx, dz);
     leg.position.set(lx, 0.31, lz); sofa.add(leg);
   });
   shadowAll(sofa); sofa.position.set(0, 0, 1.5); scene.add(sofa);
 
-  // round walnut coffee table + objects
+  // high-end sculptural coffee table — honed marble slab on a ribbed walnut drum
   const ct = new THREE.Group();
-  const ctTop = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.75, 0.12, 28), walnutMat); ctTop.position.y = 0.92; ct.add(ctTop);
-  for (let i = 0; i < 3; i++) {
-    const a = i * (Math.PI * 2 / 3);
-    const leg = mcLeg(walnutMat, 0.9, 0.06, 0.03, 0.16, Math.cos(a), Math.sin(a));
-    leg.position.set(Math.cos(a) * 1.1, 0.45, Math.sin(a) * 1.1); ct.add(leg);
+  const ctTop = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.2, 48), marbleMat); ctTop.position.y = 0.96; ctTop.castShadow = true; ct.add(ctTop);
+  const ctReveal = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.08, 40), new THREE.MeshStandardMaterial({ color: 0x161310, roughness: 1 })); ctReveal.position.y = 0.83; ct.add(ctReveal);
+  const drumGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.76, 8);
+  for (let i = 0; i < 22; i++) {
+    const a = (i / 22) * Math.PI * 2;
+    const stave = new THREE.Mesh(drumGeo, walnutMat);
+    stave.position.set(Math.cos(a) * 0.62, 0.43, Math.sin(a) * 0.62); ct.add(stave);
   }
-  const bk = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.14, 0.8), new THREE.MeshStandardMaterial({ color: 0x97836a, roughness: 0.9 }));
-  bk.position.set(-0.4, 1.06, 0.2); bk.rotation.y = 0.4; ct.add(bk);
-  const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.18, 0.16, 16), blackMetal);
-  bowl.position.set(0.7, 1.07, -0.3); ct.add(bowl);
+  const drumCore = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.76, 24), walnutMat); drumCore.position.y = 0.43; ct.add(drumCore);
+  const brassRing = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.06, 36), brass); brassRing.position.y = 0.05; ct.add(brassRing);
+  // styling: stacked design books, a sculptural object, a brass bowl
+  const book1 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.1, 0.72), upholsteryDeep); book1.position.set(-0.45, 1.11, 0.26); book1.rotation.y = 0.32; ct.add(book1);
+  const book2 = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.09, 0.66), new THREE.MeshStandardMaterial({ color: 0x32302b, roughness: 0.9 })); book2.position.set(-0.4, 1.2, 0.22); book2.rotation.y = 0.18; ct.add(book2);
+  const obj = new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 0), brass); obj.position.set(-0.4, 1.37, 0.2); ct.add(obj);
+  const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.2, 0.16, 22), brass); bowl.position.set(0.66, 1.14, -0.32); ct.add(bowl);
   shadowAll(ct); ct.position.set(0, 0, -3.2); scene.add(ct);
 
-  // two lounge chairs, angled toward the pool
+  // two modern lounge chairs — upholstered shell on a slim black-metal sled
   function lounge(x, z, ry) {
     const g = new THREE.Group();
-    const seat = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.4, 2.0), bouclé); seat.position.y = 0.95; g.add(seat);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.7, 0.4), bouclé); back.position.set(0, 1.85, 0.98); back.rotation.x = 0.2; g.add(back);
-    const armL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.9, 1.9), walnutMat); armL.position.set(-1.12, 1.15, 0.1); g.add(armL);
-    const armR = armL.clone(); armR.position.x = 1.12; g.add(armR);
-    [[-0.95, -0.8, 1, 1], [0.95, -0.8, -1, 1], [-0.95, 0.9, 1, -1], [0.95, 0.9, -1, -1]].forEach(([lx, lz, dx, dz]) => {
-      const leg = mcLeg(walnutMat, 0.78, 0.055, 0.028, 0.12, dx, dz);
-      leg.position.set(lx, 0.38, lz); g.add(leg);
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.32, 1.8), upholstery); seat.position.y = 0.74; g.add(seat);
+    const nose = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 2.0, 16), upholstery); nose.rotation.z = Math.PI / 2; nose.position.set(0, 0.74, -0.9); g.add(nose);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.5, 0.34), upholstery); back.position.set(0, 1.52, 0.82); back.rotation.x = 0.18; g.add(back);
+    [-1, 1].forEach((s) => { const arm = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.6, 1.85), upholstery); arm.position.set(s * 0.97, 1.0, 0.02); g.add(arm); });
+    const bolster = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 1.5, 16), creamSoft); bolster.rotation.z = Math.PI / 2; bolster.position.set(0, 1.04, 0.5); g.add(bolster);
+    [-0.78, 0.78].forEach((s) => {
+      const runner = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 1.9), blackMetal); runner.position.set(s, 0.09, 0); g.add(runner);
+      [-0.8, 0.8].forEach((rz) => { const up = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.64, 0.06), blackMetal); up.position.set(s, 0.41, rz); g.add(up); });
     });
     shadowAll(g); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g);
   }
   lounge(-6.2, -4.5, -0.5);
   lounge(6.4, -4.2, 0.5);
 
-  // refined mid-century brass pendant cluster over the coffee table
-  const brassMat = new THREE.MeshStandardMaterial({ color: 0xb89968, roughness: 0.3, metalness: 0.9 });
-  const bulbMat = new THREE.MeshStandardMaterial({ color: 0xfff3da, roughness: 0.25, emissive: 0xffe7bc, emissiveIntensity: 0.95 });
-  const pendant = new THREE.Group();
-  const ceilY = 10.4;
-  const ccanopy = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.12, 0.06, 16), brassMat);
-  ccanopy.position.set(0, ceilY, -3.2); pendant.add(ccanopy);
-  [[-0.58, 6.95, -3.5, 0.25], [0.46, 6.4, -3.0, 0.32], [0.06, 7.3, -2.95, 0.2]].forEach(([gx, gy, gz, r]) => {
-    const cordH = ceilY - gy;
-    const cd = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, cordH, 6), blackMetal);
-    cd.position.set(gx, gy + cordH / 2, gz); pendant.add(cd);
-    const fit = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.045, 0.13, 12), brassMat);
-    fit.position.set(gx, gy + r + 0.04, gz); pendant.add(fit);
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(r, 22, 18), bulbMat.clone());
-    bulb.position.set(gx, gy, gz); pendant.add(bulb);
-  });
-  scene.add(pendant);
-  const pendantLight = new THREE.PointLight(0xffe6bc, 16, 17, 2); pendantLight.position.set(0, 6.7, -3.2); scene.add(pendantLight);
+  // modern antler chandelier over the coffee table — gold, sculptural, radial
+  const chand = new THREE.Group();
+  const ceilY = 10.4, hubY = 7.5, hubZ = -3.2;
+  const drop = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, ceilY - hubY, 8), blackMetal);
+  drop.position.set(0, (ceilY + hubY) / 2, hubZ); chand.add(drop);
+  const ccanopy = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.06, 18), gold); ccanopy.position.set(0, ceilY - 0.03, hubZ); chand.add(ccanopy);
+  const hub = new THREE.Mesh(new THREE.SphereGeometry(0.27, 18, 14), gold); hub.position.set(0, hubY, hubZ); chand.add(hub);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.04, 10, 30), gold); ring.position.set(0, hubY - 0.06, hubZ); ring.rotation.x = Math.PI / 2; chand.add(ring);
+  const bulbMat = new THREE.MeshStandardMaterial({ color: 0xfff3da, roughness: 0.25, emissive: 0xffe2ad, emissiveIntensity: 1.15 });
+  const tine = (a, b, r1, r2) => {
+    const va = new THREE.Vector3(a[0], a[1], a[2]), vb = new THREE.Vector3(b[0], b[1], b[2]);
+    const dir = vb.clone().sub(va), len = dir.length();
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r2, r1, len, 7), gold);
+    m.position.copy(va.clone().add(vb).multiplyScalar(0.5));
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+    chand.add(m);
+  };
+  const N = 6;
+  for (let i = 0; i < N; i++) {
+    const ang = (i / N) * Math.PI * 2, ax = Math.cos(ang), az = Math.sin(ang);
+    const p0 = [ax * 0.32, hubY - 0.05, hubZ + az * 0.32];
+    const p1 = [ax * 0.95, hubY + 0.28, hubZ + az * 0.95];
+    const p2 = [ax * 1.4, hubY + 0.85, hubZ + az * 1.4];
+    const pf = [ax * 1.18, hubY + 1.0, hubZ + az * 1.18];
+    tine(p0, p1, 0.06, 0.045); tine(p1, p2, 0.045, 0.03); tine(p1, pf, 0.035, 0.02);
+    [p2, pf].forEach((pt) => { const b = new THREE.Mesh(new THREE.SphereGeometry(0.078, 16, 12), bulbMat.clone()); b.position.set(pt[0], pt[1] + 0.05, pt[2]); chand.add(b); });
+  }
+  chand.traverse((o) => { if (o.isMesh) o.castShadow = false; });
+  scene.add(chand);
+  const pendantLight = new THREE.PointLight(0xffe6bc, 17, 18, 2); pendantLight.position.set(0, 7.1, -3.2); scene.add(pendantLight);
 
   // plant by the glazing
   const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.5, 1.2, 16), cream);
@@ -562,7 +717,7 @@ function buildResidential() {
   // warm grazing across the plaster (architectural wall light)
   const wallGraze = new THREE.PointLight(0xffe9cf, 42, 24, 1.6); wallGraze.position.set(9, 7.6, -8); scene.add(wallGraze);
   // fireplace firelight (flickers in update)
-  const fireLight = new THREE.PointLight(0xff7e36, 20, 11, 2); fireLight.position.set(-14.3, 1.7, -3); scene.add(fireLight);
+  const fireLight = new THREE.PointLight(0xff7e36, 20, 11, 2); fireLight.position.set(-14.3, 2.35, -3); scene.add(fireLight);
 
   // exterior accents — subtle in daylight, add depth & realism
   const spaLight = new THREE.PointLight(0xa9dde2, 13, 8, 2); spaLight.position.set(-3.8, 0.7, -20.2); scene.add(spaLight);
@@ -571,7 +726,7 @@ function buildResidential() {
   [[-2, -36.4], [4, -36.4], [10, -36.4]].forEach(([px, pz]) => { const pl = new THREE.PointLight(0xffd9a0, 7, 6, 2); pl.position.set(px, 0.95, pz + 1.1); scene.add(pl); });
 
   return {
-    scene, exposure: 0.95,
+    scene, exposure: 0.82,
     env: { top: "#9fbad6", horizon: "#e0e4dc", bottom: "#cdc7b6", sun: "rgba(255,244,214,0.9)", sunX: 0.2, sunY: 0.22, sunSize: 0.22, intensity: 0.5 },
     from: { pos: [11.5, 5.8, 12.5], tgt: [-4, 4.2, -6] },
     to: { pos: [-2, 4.7, 2.5], tgt: [5, 3.0, -24] },
@@ -580,6 +735,7 @@ function buildResidential() {
       motes.rotation.y = t * 0.02;
       waterTex.offset.x = t * 0.006; waterTex.offset.y = t * 0.004;
       ember.material.opacity = 0.38 + Math.sin(t * 2.4) * 0.1 + Math.sin(t * 7.3) * 0.04;
+      flames.children.forEach((f, i) => { f.scale.y = 0.8 + Math.sin(t * 9 + i * 1.7) * 0.25; f.material.opacity = 0.42 + Math.sin(t * 11 + i * 1.3) * 0.12; });
       fireLight.intensity = 20 + Math.sin(t * 7.3) * 5 + Math.sin(t * 13.1) * 2.5;
       fireBowlLight.intensity = 18 + Math.sin(t * 6.1) * 4;
       pendantLight.intensity = 16 + Math.sin(t * 0.9) * 0.7;
@@ -1086,6 +1242,25 @@ class World {
     this.pmrem = new THREE.PMREMGenerator(this.renderer);
     this.pmrem.compileEquirectangularShader();
 
+    // crossfade infra — freeze the outgoing scene to a render target and dissolve
+    // into the incoming one (smooths the section-to-section transitions)
+    const dpr0 = this.renderer.getPixelRatio();
+    this.fadeRT = new THREE.WebGLRenderTarget(
+      Math.max(1, Math.floor(window.innerWidth * dpr0)),
+      Math.max(1, Math.floor(window.innerHeight * dpr0)),
+      { depthBuffer: true }
+    );
+    this.fadeRT.texture.colorSpace = THREE.SRGBColorSpace;
+    this.fadeScene = new THREE.Scene();
+    this.fadeCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    this.fadeQuad = new THREE.Mesh(
+      new THREE.PlaneGeometry(2, 2),
+      new THREE.MeshBasicMaterial({ map: this.fadeRT.texture, transparent: true, depthTest: false, depthWrite: false })
+    );
+    this.fadeQuad.material.toneMapped = false;
+    this.fadeScene.add(this.fadeQuad);
+    this.fadeAlpha = 0; this.fadeDur = 0.55;
+
     this.camera = new THREE.PerspectiveCamera(46, 1, 0.1, 300);
     this.builders = { hero: buildHero, residential: buildResidential, investment: buildInvestment, commercial: buildCommercial };
     this.scenes = {};
@@ -1112,6 +1287,25 @@ class World {
     this._loop = this._loop.bind(this);
     this._render(0);
     requestAnimationFrame(this._loop);
+    this._prewarm();
+  }
+
+  // Build + compile the other scenes during idle time so the first time the user
+  // scrolls into one there's no build/compile hitch (a common cause of hard cuts).
+  _prewarm() {
+    const keys = Object.keys(this.builders).filter((k) => k !== this.currentKey);
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 250));
+    let i = 0;
+    const step = () => {
+      if (i >= keys.length) return;
+      try {
+        const s = this.ensure(keys[i]);
+        this.renderer.compile(s.scene, this.camera);
+      } catch (e) { /* prewarm is best-effort */ }
+      i++;
+      idle(step);
+    };
+    idle(step);
   }
 
   ensure(key) {
@@ -1145,10 +1339,21 @@ class World {
 
   setScene(key) {
     if (this.currentKey === key) return;
+    // freeze the outgoing scene into the fade target, then dissolve to the new one
+    if (this.current && this.fadeRT) {
+      try {
+        this.renderer.setRenderTarget(this.fadeRT);
+        this.renderer.clear();
+        this.renderer.render(this.current.scene, this.camera);
+        this.renderer.setRenderTarget(null);
+        this.fadeQuad.material.map = this.fadeRT.texture;
+        this.fadeAlpha = 1;
+      } catch (e) { this.fadeAlpha = 0; this.renderer.setRenderTarget(null); }
+    }
     this.currentKey = key;
     this.current = this.ensure(key);
     this.renderer.toneMappingExposure = this.current.exposure || 1;
-    this.progress = this.targetProgress; // snap on scene change — no cross-scene sweep
+    this.progress = this.targetProgress; // snap on scene change — the dissolve covers it
     this._needsRender = true;
   }
 
@@ -1172,6 +1377,15 @@ class World {
       if (this.current.update && !this.reduce) this.current.update(dt, t, ease(this.progress));
       this._applyCamera();
       this.renderer.render(this.current.scene, this.camera);
+      // dissolve the frozen previous scene out over the top
+      if (this.fadeAlpha > 0) {
+        const ac = this.renderer.autoClear;
+        this.renderer.autoClear = false;
+        this.fadeQuad.material.opacity = this.fadeAlpha;
+        this.renderer.render(this.fadeScene, this.fadeCam);
+        this.renderer.autoClear = ac;
+        this.fadeAlpha = Math.max(0, this.fadeAlpha - (dt || 0.016) / this.fadeDur);
+      }
       this.frames = (this.frames || 0) + 1;
     } catch (e) { this.lastError = e.message + " | " + (e.stack || "").split("\n")[1]; }
   }
@@ -1180,6 +1394,10 @@ class World {
     const w = window.innerWidth, h = window.innerHeight;
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
+    if (this.fadeRT) {
+      const dpr = this.renderer.getPixelRatio();
+      this.fadeRT.setSize(Math.max(1, Math.floor(w * dpr)), Math.max(1, Math.floor(h * dpr)));
+    }
     this._needsRender = true;
   }
 
