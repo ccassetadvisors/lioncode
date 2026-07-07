@@ -188,3 +188,169 @@
     });
   };
 })();
+
+/* ============================================================
+   V2 — interaction layer (progress, magnetic, tilt, embers,
+   count-up, inline lead forms)
+   ============================================================ */
+(function () {
+  'use strict';
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* ---------- scroll progress hairline ---------- */
+  var prog = document.createElement('div');
+  prog.className = 'scroll-progress';
+  prog.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(prog);
+  var pQueued = false;
+  function paintProg() {
+    pQueued = false;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    prog.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0).toFixed(4) + ')';
+  }
+  window.addEventListener('scroll', function () {
+    if (!pQueued) { pQueued = true; requestAnimationFrame(paintProg); }
+  }, { passive: true });
+  paintProg();
+
+  /* ---------- magnetic buttons ---------- */
+  if (fine && !rm) {
+    document.querySelectorAll('.btn').forEach(function (b) {
+      b.addEventListener('pointermove', function (e) {
+        var r = b.getBoundingClientRect();
+        var x = (e.clientX - r.left - r.width / 2) / r.width;
+        var y = (e.clientY - r.top - r.height / 2) / r.height;
+        b.style.transform = 'translate(' + (x * 6).toFixed(1) + 'px,' + (y * 5 - 2).toFixed(1) + 'px)';
+      });
+      b.addEventListener('pointerleave', function () { b.style.transform = ''; });
+    });
+  }
+
+  /* ---------- tilt cards ---------- */
+  if (fine && !rm) {
+    document.querySelectorAll('[data-tilt]').forEach(function (c) {
+      var raf = null;
+      c.addEventListener('pointermove', function (e) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = null;
+          var r = c.getBoundingClientRect();
+          var x = (e.clientX - r.left) / r.width - 0.5;
+          var y = (e.clientY - r.top) / r.height - 0.5;
+          c.style.transform = 'perspective(900px) rotateX(' + (-y * 4).toFixed(2) + 'deg) rotateY(' + (x * 5).toFixed(2) + 'deg) translateY(-4px)';
+        });
+      });
+      c.addEventListener('pointerleave', function () {
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+        c.style.transform = '';
+      });
+    });
+  }
+
+  /* ---------- ember particles ---------- */
+  if (fine && !rm && !window.matchMedia('(max-width:920px)').matches) {
+    document.querySelectorAll('.embers').forEach(function (cv) {
+      var ctx = cv.getContext('2d');
+      var W, H, parts = [], running = false, rafId = null;
+      function size() {
+        var r = cv.parentElement.getBoundingClientRect();
+        W = cv.width = Math.floor(r.width / 2);
+        H = cv.height = Math.floor(r.height / 2);
+        cv.style.width = '100%'; cv.style.height = '100%';
+      }
+      function spawn(init) {
+        return {
+          x: Math.random() * W,
+          y: init ? Math.random() * H : H + 6,
+          r: 0.6 + Math.random() * 1.3,
+          vy: 0.12 + Math.random() * 0.3,
+          vx: (Math.random() - 0.5) * 0.14,
+          a: 0.15 + Math.random() * 0.5,
+          tw: Math.random() * Math.PI * 2
+        };
+      }
+      function tick() {
+        rafId = null;
+        if (!running) return;
+        ctx.clearRect(0, 0, W, H);
+        for (var i = 0; i < parts.length; i++) {
+          var p = parts[i];
+          p.y -= p.vy; p.x += p.vx; p.tw += 0.04;
+          if (p.y < -8) parts[i] = p = spawn(false);
+          var glow = p.a * (0.65 + 0.35 * Math.sin(p.tw));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+          ctx.fillStyle = 'rgba(222,178,110,' + glow.toFixed(3) + ')';
+          ctx.shadowColor = 'rgba(214,150,72,.8)';
+          ctx.shadowBlur = 5;
+          ctx.fill();
+        }
+        rafId = requestAnimationFrame(tick);
+      }
+      size();
+      for (var i = 0; i < 26; i++) parts.push(spawn(true));
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          running = e.isIntersecting;
+          if (running && !rafId) rafId = requestAnimationFrame(tick);
+        });
+      });
+      io.observe(cv);
+      window.addEventListener('resize', size);
+    });
+  }
+
+  /* ---------- count-up stats ---------- */
+  var counters = document.querySelectorAll('[data-count]');
+  if ('IntersectionObserver' in window && counters.length && !rm) {
+    var cio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        cio.unobserve(e.target);
+        var el = e.target, target = parseInt(el.getAttribute('data-count'), 10);
+        var suffix = el.getAttribute('data-suffix') || '';
+        var t0 = performance.now(), dur = 1600;
+        (function step(t) {
+          var k = Math.min(1, (t - t0) / dur);
+          var eased = 1 - Math.pow(1 - k, 3);
+          el.firstChild.nodeValue = Math.round(target * eased);
+          if (k < 1) requestAnimationFrame(step);
+          else el.firstChild.nodeValue = target;
+        })(t0);
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(function (el) { cio.observe(el); });
+  }
+
+  /* ---------- inline lead form (drop <div class="lead-mini" data-source="x"> anywhere) ---------- */
+  document.querySelectorAll('.lead-mini').forEach(function (box) {
+    var src = box.getAttribute('data-source') || location.pathname;
+    box.innerHTML =
+      '<form novalidate>' +
+      '<div class="lm-row"><input name="name" placeholder="Name" autocomplete="name">' +
+      '<input name="phone" placeholder="Phone" autocomplete="tel"></div>' +
+      '<input name="email" type="email" placeholder="Email" autocomplete="email" required style="margin-top:12px">' +
+      '<textarea name="message" rows="2" placeholder="What are you working on?" style="margin-top:12px;resize:vertical"></textarea>' +
+      '<button type="submit" class="btn btn-gold" style="margin-top:16px;width:100%">Request a callback&nbsp;&nbsp;→</button>' +
+      '<div style="margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:rgba(237,230,215,.4);text-align:center">A REAL PERSON REPLIES WITHIN ONE BUSINESS DAY</div>' +
+      '</form>' +
+      '<div class="sent-note"><span style="font-family:var(--serif);font-size:22px;display:block;margin-bottom:6px">Received.</span>We’ll call you within one business day. Need us sooner? <a href="tel:+14694799656" style="color:var(--gold);text-decoration:none">(469)&nbsp;479-9656</a></div>';
+    var form = box.querySelector('form');
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var get = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ''; };
+      var email = get('email');
+      if (!email || email.indexOf('@') < 0) { form.querySelector('[name="email"]').focus(); return; }
+      window.CC.send('Callback request — ' + src, {
+        Type: 'Callback request', Name: get('name'), Phone: get('phone'),
+        Email: email, Message: get('message'), Source: src
+      }).catch(function () {
+        window.CC.mailtoFallback('Callback request — ' + src,
+          'Name: ' + get('name') + '\r\nPhone: ' + get('phone') + '\r\nEmail: ' + email + '\r\n\r\n' + get('message'));
+      });
+      form.style.display = 'none';
+      box.querySelector('.sent-note').style.display = 'block';
+    });
+  });
+})();

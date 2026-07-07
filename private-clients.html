@@ -62,7 +62,7 @@ body{background:#070503}
   <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-52%);display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 clamp(16px,4vw,40px)">
     <h1 style="margin:0">
       <span style="display:block;overflow:hidden;padding-bottom:.05em"><span style="display:inline-block;animation:rise 1.2s var(--ease-out) .5s both;font-family:var(--serif);font-size:clamp(36px,min(6.4vw,9.4svh),110px);line-height:1.02;letter-spacing:-0.022em;color:#EDE6D7;text-shadow:0 2px 28px rgba(7,5,3,.85)">Your real estate team,</span></span>
-      <span style="display:block;overflow:hidden;padding-bottom:.07em"><span style="display:inline-block;animation:rise 1.2s var(--ease-out) .8s both;font-family:var(--serif);font-style:italic;font-size:clamp(36px,min(6.4vw,9.4svh),110px);line-height:1.02;letter-spacing:-0.022em;color:#C7B186;text-shadow:0 2px 28px rgba(7,5,3,.85)">without the payroll.</span></span>
+      <span style="display:block;overflow:hidden;padding-bottom:.07em"><span class="gold-text" style="display:inline-block;animation:rise 1.2s var(--ease-out) .8s both;font-family:var(--serif);font-style:italic;font-size:clamp(36px,min(6.4vw,9.4svh),110px);line-height:1.02;letter-spacing:-0.022em">without the payroll.</span></span>
     </h1>
     <p style="font-family:var(--mono);font-size:clamp(9.5px,1vw,12px);letter-spacing:.3em;color:rgba(237,230,215,.72);margin:clamp(18px,3svh,32px) 0 0;animation:fadeIn 1.3s 1.4s both;text-shadow:0 1px 14px rgba(7,5,3,.85)">LEAN · SENIOR · EVERY BASE COVERED</p>
   </div>
@@ -75,19 +75,19 @@ body{background:#070503}
     <div class="mono-label" style="letter-spacing:.3em">WHO WE SERVE</div>
     <h2 class="reveal" style="margin:22px 0 0;font-family:var(--serif);font-size:clamp(30px,3.4vw,52px);line-height:1.08;color:#EDE6D7;max-width:940px">Built for the clients who need <em style="color:#C7B186">a whole team, not a whole department.</em></h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:64px">
-      <div class="pc-card reveal">
+      <div class="pc-card reveal" data-tilt>
         <div class="pc-num" aria-hidden="true">01</div>
         <div style="font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:rgba(199,177,134,.7)">FAMILY OFFICES</div>
         <div style="font-family:var(--serif);font-size:clamp(23px,2.2vw,30px);line-height:1.12;color:#EDE6D7;margin-top:16px">Real estate expertise on call — without adding headcount.</div>
         <div style="font-size:14px;line-height:1.6;color:rgba(237,230,215,.6);margin-top:14px">Acquisitions, dispositions, and the quiet upkeep of holdings — handled by the partners, reported plainly.</div>
       </div>
-      <div class="pc-card reveal" data-delay="1">
+      <div class="pc-card reveal" data-tilt data-delay="1">
         <div class="pc-num" aria-hidden="true">02</div>
         <div style="font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:rgba(199,177,134,.7)">INDEPENDENT INVESTORS</div>
         <div style="font-family:var(--serif);font-size:clamp(23px,2.2vw,30px);line-height:1.12;color:#EDE6D7;margin-top:16px">Institutional rigor at a personal scale.</div>
         <div style="font-size:14px;line-height:1.6;color:rgba(237,230,215,.6);margin-top:14px">Underwriting before you buy, field eyes on what you own, and an honest hold-or-sell read — every year.</div>
       </div>
-      <div class="pc-card reveal" data-delay="2">
+      <div class="pc-card reveal" data-tilt data-delay="2">
         <div class="pc-num" aria-hidden="true">03</div>
         <div style="font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:rgba(199,177,134,.7)">SMALL DEVELOPMENT FIRMS</div>
         <div style="font-family:var(--serif);font-size:clamp(23px,2.2vw,30px);line-height:1.12;color:#EDE6D7;margin-top:16px">An operator across the table who builds, too.</div>
@@ -126,9 +126,10 @@ body{background:#070503}
 <!-- THE STANDARD -->
 <section style="position:relative;background:#070503;padding:clamp(130px,18vh,220px) var(--pad-x);text-align:center;overflow:hidden">
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 118%,rgba(176,86,60,.13),transparent 62%);animation:emberGlow 6s ease-in-out infinite;pointer-events:none"></div>
+  <canvas class="embers" aria-hidden="true"></canvas>
   <div style="position:relative">
     <div class="mono-label reveal-fade" style="letter-spacing:.3em">THE STANDARD</div>
-    <h2 class="reveal" style="margin:26px auto 0;font-family:var(--serif);font-size:clamp(28px,3.2vw,48px);line-height:1.22;color:#EDE6D7;max-width:920px">The most valuable conversations happen quietly, <em style="color:#C7B186">before anything is public.</em></h2>
+    <h2 class="reveal" style="margin:26px auto 0;font-family:var(--serif);font-size:clamp(28px,3.2vw,48px);line-height:1.22;color:#EDE6D7;max-width:920px">The most valuable conversations happen quietly, <em class="gold-text">before anything is public.</em></h2>
     <p class="reveal-fade" style="font-size:14.5px;line-height:1.6;color:rgba(237,230,215,.55);max-width:520px;margin:24px auto 0">A conversation with the partners — and an honest read on whether we're the right fit.</p>
   </div>
 </section>
@@ -140,12 +141,10 @@ body{background:#070503}
       <h2 style="margin:0;font-family:var(--serif);font-size:clamp(30px,3vw,44px);line-height:1.06;color:#EDE6D7">Open a private inquiry.</h2>
       <p style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);margin:14px 0 0;max-width:420px">Handled directly by the partners. A real person replies within one business day.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <a href="index.html#contact" class="btn btn-gold" style="padding:16px 32px;text-align:center">Private inquiry →</a>
-      <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75);text-align:center">
-        <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
-      </div>
-    </div>
+    <div class="lead-mini" data-source="private-clients"></div>
+  </div>
+  <div class="wrap" style="margin-top:34px;text-align:center;font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75)">
+    <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
   </div>
   <div class="wrap foot" style="margin-top:72px">
     <div>C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Discretion by default</div>

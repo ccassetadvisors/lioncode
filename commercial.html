@@ -21,6 +21,20 @@
 <link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/hanken.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/site.css">
+<style>
+/* hub diagram draws itself on reveal */
+.hub-svg line{stroke-dasharray:240;stroke-dashoffset:240;transition:stroke-dashoffset 1.6s var(--ease-out)}
+.hub-svg circle:not(.hub-core){transform-origin:center;transform-box:fill-box;transform:scale(0);transition:transform .7s var(--ease-out)}
+.reveal.in .hub-svg line{stroke-dashoffset:0}
+.reveal.in .hub-svg circle:not(.hub-core){transform:scale(1)}
+.reveal.in .hub-svg line:nth-of-type(2){transition-delay:.12s}.reveal.in .hub-svg line:nth-of-type(3){transition-delay:.24s}
+.reveal.in .hub-svg line:nth-of-type(4){transition-delay:.36s}.reveal.in .hub-svg line:nth-of-type(5){transition-delay:.48s}
+.reveal.in .hub-svg line:nth-of-type(6){transition-delay:.6s}.reveal.in .hub-svg line:nth-of-type(7){transition-delay:.72s}
+.reveal.in .hub-svg circle:nth-of-type(1){transition-delay:.3s}.reveal.in .hub-svg circle:nth-of-type(2){transition-delay:.42s}
+.reveal.in .hub-svg circle:nth-of-type(3){transition-delay:.54s}.reveal.in .hub-svg circle:nth-of-type(4){transition-delay:.66s}
+.reveal.in .hub-svg circle:nth-of-type(5){transition-delay:.78s}.reveal.in .hub-svg circle:nth-of-type(6){transition-delay:.9s}
+.reveal.in .hub-svg circle:nth-of-type(7){transition-delay:1s}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -69,7 +83,7 @@
   <div class="wrap-wide" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(36px,5vw,80px);align-items:center">
     <div>
       <div class="mono-label" style="letter-spacing:.3em">THE MODEL</div>
-      <h2 class="h-display reveal" style="font-size:clamp(30px,3.2vw,50px);line-height:1.08;margin-top:22px">One relationship at the hub. <em>The right specialist on every spoke.</em></h2>
+      <h2 class="h-display reveal" style="font-size:clamp(30px,3.2vw,50px);line-height:1.08;margin-top:22px">One relationship at the hub. <em class="gold-text">The right specialist on every spoke.</em></h2>
       <div style="margin-top:44px;display:flex;flex-direction:column">
         <div class="row-hover" style="border-top:1px solid rgba(199,177,134,.16);padding:22px 0">
           <div style="font-size:15.5px;font-weight:600;color:#EDE6D7">We understand how buildings work.</div>
@@ -86,7 +100,7 @@
       </div>
     </div>
     <div class="reveal" style="display:flex;flex-direction:column;align-items:center">
-      <svg viewBox="0 0 520 412" style="display:block;width:min(100%,520px);height:auto;overflow:visible" role="img" aria-label="C&amp;C Brokerage at the hub of a specialist network spanning industrial, office, retail, multifamily, lending, construction, and legal">
+      <svg class="hub-svg" viewBox="0 0 520 412" style="display:block;width:min(100%,520px);height:auto;overflow:visible" role="img" aria-label="C&amp;C Brokerage at the hub of a specialist network spanning industrial, office, retail, multifamily, lending, construction, and legal">
         <text x="260" y="26" text-anchor="middle" fill="rgba(237,230,215,.48)" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="2.8">ASSET MARKETS</text>
         <text x="260" y="404" text-anchor="middle" fill="rgba(237,230,215,.48)" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="2.8">DISCIPLINES</text>
         <line x1="213.8" y1="190.0" x2="85.7" y2="154.3" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
@@ -103,7 +117,7 @@
         <circle cx="85.7" cy="257.7" r="4" fill="#9DB0B4"></circle>
         <circle cx="260" cy="344" r="5.5" fill="#C7B186"></circle>
         <circle cx="434.3" cy="257.7" r="4" fill="#9DB0B4"></circle>
-        <circle cx="260" cy="206" r="56" fill="rgba(12,10,7,.72)" stroke="#C7B186" stroke-width="1.2" style="animation:corePulse 4s ease-in-out infinite"></circle>
+        <circle class="hub-core" cx="260" cy="206" r="56" fill="rgba(12,10,7,.72)" stroke="#C7B186" stroke-width="1.2" style="animation:corePulse 4s ease-in-out infinite"></circle>
         <text x="260" y="204" text-anchor="middle" fill="#EDE6D7" font-family="Cormorant Garamond,serif" font-size="31" letter-spacing="-0.3">C&amp;C</text>
         <text x="260" y="228" text-anchor="middle" fill="#C7B186" font-family="IBM Plex Mono,monospace" font-size="11.5" letter-spacing="2.3">BROKERAGE</text>
         <text x="71.8" y="138.3" text-anchor="end" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Industrial</text>
@@ -140,12 +154,10 @@
       <h2 class="h-display" style="font-size:clamp(30px,3vw,44px);line-height:1.06">Discuss a commercial requirement.</h2>
       <p style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);margin:14px 0 0;max-width:420px">Directed by Dalton and Irma. A real person replies within one business day.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <a href="index.html#contact" class="btn btn-gold" style="padding:16px 32px;text-align:center">Start a conversation →</a>
-      <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75);text-align:center">
-        <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
-      </div>
-    </div>
+    <div class="lead-mini" data-source="commercial"></div>
+  </div>
+  <div class="wrap" style="margin-top:34px;text-align:center;font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75)">
+    <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
   </div>
   <div class="wrap foot" style="margin-top:72px">
     <div>C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Broker-led, family-owned</div>

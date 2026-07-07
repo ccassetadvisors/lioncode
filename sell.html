@@ -23,7 +23,8 @@
 <link rel="stylesheet" href="css/site.css">
 <style>
 .step{flex:1 1 150px;border:1px solid rgba(23,19,13,.16);padding:16px 16px 18px;cursor:pointer;color:#5C5344;background:transparent;transition:all .4s var(--ease-out);text-align:left;font-family:var(--sans)}
-.step.on{background:#17130D;color:#F2EEE6;border-color:#17130D;transform:translateY(-4px)}
+.step.on{background:linear-gradient(120deg,#17130D,#241D12);color:#F2EEE6;border-color:#C7B186;transform:translateY(-4px);box-shadow:0 10px 26px rgba(23,19,13,.35),0 0 0 1px rgba(199,177,134,.4)}
+.step:hover{border-color:rgba(143,117,70,.6)}
 .gets-card{position:relative;overflow:hidden;height:clamp(300px,44vh,420px)}
 .gets-card>img{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;animation:para 1s linear both;animation-timeline:view();animation-range:cover}
 .gets-card>figcaption{position:absolute;left:0;right:0;bottom:0;padding:36px 16px 12px;background:linear-gradient(180deg,transparent,rgba(10,8,6,.82));font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,230,215,.85)}
@@ -68,7 +69,7 @@
 <!-- HONESTY -->
 <section style="background:#0A0806;padding:clamp(110px,15vh,180px) var(--pad-x);text-align:center;border-top:1px solid rgba(199,177,134,.12)">
   <div class="mono-label reveal-fade" style="letter-spacing:.3em">THE HOUSE POLICY</div>
-  <h2 class="reveal" style="margin:26px auto 0;font-family:var(--serif);font-size:clamp(30px,3.6vw,56px);line-height:1.18;color:#EDE6D7;max-width:940px">You'll hear the honest number first — <em style="color:#C7B186">even when it's not what you hoped.</em></h2>
+  <h2 class="reveal" style="margin:26px auto 0;font-family:var(--serif);font-size:clamp(30px,3.6vw,56px);line-height:1.18;color:#EDE6D7;max-width:940px">You'll hear the honest number first — <em class="gold-text">even when it's not what you hoped.</em></h2>
   <p class="reveal-fade" style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.55);max-width:560px;margin:24px auto 0">We'd rather you price right, launch strong, and negotiate from strength.</p>
   <div class="reveal-line" style="width:120px;height:1px;background:rgba(199,177,134,.5);margin:44px auto 0"></div>
 </section>
@@ -116,9 +117,9 @@
       <a href="index.html#sc-work" style="font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#C7B186;text-decoration:none">See the reel →</a>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px;margin-top:44px">
-      <figure class="gets-card reveal" style="margin:0"><img loading="lazy" src="assets/img/launch-film.jpg" alt="A dramatic exterior at dusk from a C&amp;C listing film"><figcaption>Cinema-grade film</figcaption></figure>
-      <figure class="gets-card reveal" data-delay="1" style="margin:0"><img loading="lazy" src="assets/img/launch-stills.jpg" alt="Editorial interior still photography"><figcaption>Editorial stills</figcaption></figure>
-      <figure class="gets-card reveal" data-delay="2" style="margin:0"><img loading="lazy" src="assets/img/launch-social.jpg" alt="Social media launch content for a listing"><figcaption>Social cuts &amp; launch plan</figcaption></figure>
+      <figure class="gets-card reveal" data-tilt style="margin:0"><img loading="lazy" src="assets/img/launch-film.jpg" alt="A dramatic exterior at dusk from a C&amp;C listing film"><figcaption>Cinema-grade film</figcaption></figure>
+      <figure class="gets-card reveal" data-tilt data-delay="1" style="margin:0"><img loading="lazy" src="assets/img/launch-stills.jpg" alt="Editorial interior still photography"><figcaption>Editorial stills</figcaption></figure>
+      <figure class="gets-card reveal" data-tilt data-delay="2" style="margin:0"><img loading="lazy" src="assets/img/launch-social.jpg" alt="Social media launch content for a listing"><figcaption>Social cuts &amp; launch plan</figcaption></figure>
     </div>
     <p style="margin:36px 0 0;font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);max-width:640px">Filmed, photographed, and presented in-house — then launched with a plan: timing, staging notes, and the buyer story the property tells.</p>
   </div>
@@ -131,12 +132,10 @@
       <h2 style="margin:0;font-family:var(--serif);font-size:clamp(30px,3vw,44px);line-height:1.06;color:#EDE6D7">Thinking about selling?</h2>
       <p style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);margin:14px 0 0;max-width:420px">A real person replies within one business day.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <a href="index.html#contact" class="btn btn-gold" style="padding:16px 32px;text-align:center">Send an inquiry →</a>
-      <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75);text-align:center">
-        <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
-      </div>
-    </div>
+    <div class="lead-mini" data-source="sell"></div>
+  </div>
+  <div class="wrap" style="margin-top:34px;text-align:center;font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75)">
+    <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
   </div>
   <div class="wrap foot" style="margin-top:72px">
     <div>C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Broker-led, family-owned</div>

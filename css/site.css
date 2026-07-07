@@ -211,9 +211,9 @@ h1,h2,h3{font-weight:400}
   .h-display{letter-spacing:-0.015em}
 
   /* sticky CTA becomes a slim bottom bar instead of a floating pill */
-  .sticky-cta{left:0;right:0;bottom:0!important;transform:translateY(101%)}
+  .sticky-cta{left:0;right:0;bottom:0!important;transform:translateY(101%);display:flex}
   .sticky-cta.on{transform:none}
-  .sticky-cta a{display:block;text-align:center;padding:15px 20px calc(15px + env(safe-area-inset-bottom));animation:none;box-shadow:0 -10px 28px rgba(0,0,0,.45)}
+  .sticky-cta a{display:block;flex:1;text-align:center;padding:15px 12px calc(15px + env(safe-area-inset-bottom));animation:none;box-shadow:0 -10px 28px rgba(0,0,0,.45)}
 
   /* row-hover indent is a desktop affordance */
   .row-hover:hover{padding-left:0}
@@ -232,3 +232,90 @@ h1,h2,h3{font-weight:400}
   .reveal,.reveal-fade{opacity:1;transform:none}
   .reveal-line{transform:scaleX(1)}
 }
+
+/* ============================================================
+   V2 — GOLD AMPLIFICATION LAYER
+   ============================================================ */
+:root{
+  --gold-hi:#F4E3BB;
+  --gold-grad:linear-gradient(105deg,#8F7546 0%,#C7B186 28%,#F4E3BB 50%,#C7B186 72%,#8F7546 100%);
+}
+
+/* selection + scrollbar carry the brand */
+::selection{background:rgba(199,177,134,.4);color:#0A0806}
+html{scrollbar-color:#8F7546 #0C0A07}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:#0C0A07}
+::-webkit-scrollbar-thumb{background:linear-gradient(#C7B186,#8F7546);border-radius:6px;border:2px solid #0C0A07}
+
+/* scroll progress hairline under the HUD */
+.scroll-progress{position:fixed;top:58px;left:0;height:2px;width:100%;z-index:81;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,#8F7546,#C7B186 40%,#F4E3BB 90%);box-shadow:0 0 12px rgba(199,177,134,.55);will-change:transform;pointer-events:none}
+
+/* shimmering gold display text */
+.gold-text{background:var(--gold-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
+
+/* gold buttons: gradient, glow, light-sweep */
+.btn{position:relative;overflow:hidden}
+.btn-gold{background:linear-gradient(115deg,#B49A6C,#C7B186 45%,#D9C49A);box-shadow:0 4px 22px rgba(199,177,134,.28),inset 0 1px 0 rgba(255,255,255,.35);transition:box-shadow .45s,transform .45s var(--ease-out),background .45s}
+.btn-gold:hover{background:linear-gradient(115deg,#C7B186,#E8D5AC 45%,#F4E3BB);box-shadow:0 8px 34px rgba(199,177,134,.5),inset 0 1px 0 rgba(255,255,255,.5);transform:translateY(-2px);color:var(--ink-4)}
+.btn-gold::after{content:'';position:absolute;top:0;bottom:0;left:-80%;width:50%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);transition:left .7s var(--ease-out);pointer-events:none}
+.btn-gold:hover::after{left:130%}
+.btn-ghost:hover,.btn-ghost--gold:hover{box-shadow:0 0 26px rgba(199,177,134,.25)}
+.hud-contact:hover{box-shadow:0 0 18px rgba(199,177,134,.3)}
+
+/* section labels get a gold spark */
+.mono-label::before{content:'';display:inline-block;width:5px;height:5px;background:var(--gold);transform:rotate(45deg) translateY(-1px);margin-right:12px;box-shadow:0 0 8px rgba(199,177,134,.8);vertical-align:1px}
+
+/* gradient hairlines for dark-section rules */
+.gold-rule{height:1px;border:none;background:linear-gradient(90deg,transparent,rgba(199,177,134,.7),transparent)}
+
+/* row-hover: growing gold bar */
+.row-hover{position:relative}
+.row-hover::before{content:'';position:absolute;left:0;top:0;width:2px;height:100%;background:linear-gradient(180deg,#C7B186,transparent);transform:scaleY(0);transform-origin:top;transition:transform .45s var(--ease-out)}
+@media (hover:hover){.row-hover:hover::before{transform:scaleY(1)}}
+
+/* tilt cards */
+[data-tilt]{transform-style:preserve-3d;will-change:transform;transition:box-shadow .5s}
+@media (hover:hover){[data-tilt]:hover{box-shadow:0 18px 44px rgba(0,0,0,.45),0 0 0 1px rgba(199,177,134,.28)}}
+
+/* ember particle canvas */
+.embers{position:absolute;inset:0;pointer-events:none;z-index:3}
+@media (max-width:920px),(pointer:coarse),(prefers-reduced-motion:reduce){.embers{display:none}}
+
+/* marquee ticker */
+.ticker{overflow:hidden;border-top:1px solid rgba(199,177,134,.22);border-bottom:1px solid rgba(199,177,134,.22);background:linear-gradient(180deg,rgba(199,177,134,.05),rgba(199,177,134,.02));padding:16px 0;position:relative}
+.ticker-track{display:flex;gap:0;width:max-content;animation:tickerScroll 42s linear infinite;will-change:transform}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker-track span{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:rgba(199,177,134,.75);white-space:nowrap;padding:0 28px;display:flex;align-items:center;gap:28px}
+.ticker-track span::after{content:'◆';font-size:7px;color:rgba(199,177,134,.5)}
+@keyframes tickerScroll{to{transform:translate3d(-50%,0,0)}}
+@media (prefers-reduced-motion:reduce){.ticker-track{animation:none}}
+
+/* monogram medallion — the no-photo team mark */
+.medallion{position:relative;width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.medallion::before{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid rgba(199,177,134,.65);box-shadow:0 0 22px rgba(199,177,134,.25),inset 0 0 18px rgba(199,177,134,.12)}
+.medallion::after{content:'';position:absolute;inset:6px;border-radius:50%;border:1px dashed rgba(199,177,134,.35)}
+.medallion b{font-family:var(--serif);font-weight:400;font-size:30px;letter-spacing:.04em;background:var(--gold-grad);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 7s ease-in-out infinite}
+.medallion small{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;letter-spacing:.3em;color:rgba(199,177,134,.6);white-space:nowrap}
+.medallion--sm{width:64px;height:64px}
+.medallion--sm b{font-size:21px}
+.medallion--paper::before{border-color:rgba(143,117,70,.75);box-shadow:0 0 16px rgba(143,117,70,.2),inset 0 0 12px rgba(143,117,70,.1)}
+.medallion--paper::after{border-color:rgba(143,117,70,.4)}
+
+/* compact inline lead form (every page's contact section) */
+.lead-mini{display:flex;flex-direction:column;gap:12px;min-width:min(100%,380px);flex:1 1 340px}
+.lead-mini .lm-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lead-mini input,.lead-mini textarea{background:rgba(237,230,215,.04);border:1px solid rgba(237,230,215,.16);padding:13px 15px;font-size:13.5px;font-family:var(--sans);color:var(--bone);outline:none;border-radius:0;width:100%;transition:border-color .3s,box-shadow .3s}
+.lead-mini input::placeholder,.lead-mini textarea::placeholder{color:rgba(237,230,215,.38)}
+.lead-mini input:focus,.lead-mini textarea:focus{border-color:rgba(199,177,134,.7);box-shadow:0 0 14px rgba(199,177,134,.15)}
+.lead-mini .sent-note{display:none;border:1px solid rgba(199,177,134,.5);padding:22px;font-size:14.5px;color:var(--bone);animation:rev .5s both;background:rgba(199,177,134,.05)}
+@media (max-width:560px){.lead-mini .lm-row{grid-template-columns:1fr}}
+
+/* count-up stat helper */
+[data-count]{font-variant-numeric:tabular-nums}
+
+/* reveal: subtle unblur for extra depth */
+.reveal{filter:blur(7px)}
+.reveal.in{filter:blur(0)}
+@media (prefers-reduced-motion:reduce){.reveal{filter:none}}

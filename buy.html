@@ -105,7 +105,7 @@
 <section id="numbers" class="section" style="background:#F2EEE6">
   <div class="wrap">
     <div class="mono-label mono-label--paper">WHAT IT ACTUALLY COSTS — MOVE THE SLIDERS</div>
-    <h2 class="h-display h-display--paper" style="font-size:clamp(30px,3.4vw,52px);line-height:1.08;margin-top:22px;max-width:820px">The number nobody shows you <em>until it's too late.</em></h2>
+    <h2 class="h-display h-display--paper" style="font-size:clamp(30px,3.4vw,52px);line-height:1.08;margin-top:22px;max-width:820px">The number nobody shows you <em class="gold-text">until it's too late.</em></h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:clamp(28px,4vw,64px);margin-top:56px;align-items:start">
       <div>
         <div style="display:flex;justify-content:space-between;align-items:baseline">
@@ -134,7 +134,7 @@
         </div>
         <input class="slider" id="ins" type="range" min="1200" max="6000" step="100" value="2400">
       </div>
-      <div style="background:#17130D;padding:clamp(28px,3.5vw,44px)">
+      <div data-tilt style="background:#17130D;padding:clamp(28px,3.5vw,44px);border-top:2px solid #C7B186">
         <div style="display:flex;flex-direction:column">
           <div class="calc-row"><div class="calc-lbl">PRINCIPAL &amp; INTEREST</div><div class="calc-val" id="oMonthly"></div></div>
           <div class="calc-row"><div class="calc-lbl">PROPERTY TAXES</div><div class="calc-val" id="oTax"></div></div>
@@ -142,7 +142,7 @@
           <div class="calc-row" id="pmiRow"><div class="calc-lbl">PMI <span style="color:rgba(237,230,215,.35)">· UNDER 20% DOWN</span></div><div class="calc-val" id="oPmi"></div></div>
           <div style="padding:16px 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:16px">
             <div style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#C7B186">ALL-IN MONTHLY</div>
-            <div style="font-family:var(--serif);font-size:clamp(32px,3.2vw,46px);color:#C7B186" id="oAllIn"></div>
+            <div class="gold-text" style="font-family:var(--serif);font-size:clamp(32px,3.2vw,46px)" id="oAllIn"></div>
           </div>
           <div style="border-top:1px solid rgba(199,177,134,.3);margin-top:14px;padding:14px 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:16px">
             <div style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:rgba(237,230,215,.7)">EST. CASH TO CLOSE <span style="color:rgba(237,230,215,.4)">· DOWN + ~3% CLOSING</span></div>
@@ -150,7 +150,12 @@
           </div>
         </div>
         <div style="font-size:12px;line-height:1.6;color:rgba(237,230,215,.5);margin-top:16px">Estimates on a 30-year note. Taxes vary by county and exemptions; insurance and PMI vary by profile; assistance programs can cut the cash to close. Your exact numbers, in writing, are free.</div>
-        <a href="#contact" class="btn btn-gold" style="display:block;padding:15px;font-size:11.5px;text-align:center;margin-top:22px">Get my real numbers →</a>
+        <form id="calcCapture" novalidate style="margin-top:22px;display:flex;flex-direction:column;gap:10px">
+          <label class="sr-only" for="calcEmail">Email address</label>
+          <input id="calcEmail" type="email" placeholder="your@email.com" required style="background:rgba(237,230,215,.05);border:1px solid rgba(237,230,215,.2);padding:13px 15px;font-size:13.5px;font-family:var(--sans);color:#EDE6D7;outline:none;border-radius:0;width:100%">
+          <button type="submit" class="btn btn-gold" style="display:block;width:100%;padding:15px;font-size:11.5px">Email me these exact numbers →</button>
+        </form>
+        <div id="calcSent" style="display:none;border:1px solid rgba(199,177,134,.5);padding:18px;font-size:14px;color:#EDE6D7;margin-top:22px;animation:rev .5s both">Sent. <span style="color:rgba(237,230,215,.6)">Your scenario is on its way — a real person follows up within one business day.</span></div>
       </div>
     </div>
   </div>
@@ -171,7 +176,7 @@
 <!-- SE HABLA ESPAÑOL -->
 <section style="background:#0A0806;padding:clamp(100px,14vh,170px) var(--pad-x);text-align:center">
   <div class="reveal-fade" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.32em;color:rgba(199,177,134,.65)">TU PRIMERA CASA, EXPLICADA</div>
-  <h2 class="reveal" style="margin:18px 0 0;font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(40px,6vw,92px);line-height:1.05;color:#C7B186">Se habla español.</h2>
+  <h2 class="reveal gold-text" style="margin:18px 0 0;font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(40px,6vw,92px);line-height:1.05">Se habla español.</h2>
   <p class="reveal-fade" lang="es" style="font-size:clamp(14.5px,1.3vw,17px);line-height:1.65;color:rgba(237,230,215,.7);max-width:560px;margin:22px auto 0">Los números por escrito, el contrato explicado, la negociación — todo en tu idioma, con tus asesores. No un traductor.</p>
   <a href="#contact" class="btn btn-ghost--gold reveal-fade" style="margin-top:30px;font-weight:700">Consulta en español →</a>
 </section>
@@ -239,12 +244,10 @@
       <h2 class="h-display" style="font-size:clamp(30px,3vw,44px);line-height:1.06">Scared money buys badly. <em>Informed money doesn't.</em></h2>
       <p style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);margin:14px 0 0;max-width:420px">A free consultation, your numbers in writing, and a real person within one business day.</p>
     </div>
-    <div style="display:flex;flex-direction:column;gap:14px">
-      <a href="index.html#contact" class="btn btn-gold" style="padding:16px 32px;text-align:center">Send an inquiry →</a>
-      <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75);text-align:center">
-        <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
-      </div>
-    </div>
+    <div class="lead-mini" data-source="buy"></div>
+  </div>
+  <div class="wrap" style="margin-top:34px;text-align:center;font-family:var(--mono);font-size:12.5px;line-height:2;color:rgba(237,230,215,.75)">
+    <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
   </div>
   <div class="wrap foot" style="margin-top:72px">
     <div>C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Broker-led, family-owned</div>
@@ -314,6 +317,30 @@
     $('#' + id).addEventListener('input', calc);
   });
   calc();
+
+  /* lead magnet: email the visitor's exact scenario */
+  $('#calcCapture').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = $('#calcEmail').value.trim();
+    if (!email || email.indexOf('@') < 0) { $('#calcEmail').focus(); return; }
+    var body = {
+      Type: 'Calculator scenario request', Email: email,
+      'Home price': $('#priceLabel').textContent,
+      'Down payment': DOWN[downIdx].label,
+      'Rate': $('#rateLabel').textContent,
+      'Property tax': $('#taxLabel').textContent,
+      'Insurance/yr': $('#insLabel').textContent,
+      'P&I': $('#oMonthly').textContent,
+      'All-in monthly': $('#oAllIn').textContent,
+      'Cash to close': $('#oCash').textContent,
+      Source: 'buy calculator'
+    };
+    window.CC.send('Buyer calculator lead — ' + email, body).catch(function () {
+      window.CC.mailtoFallback('My first-home numbers', 'Please send my scenario: ' + JSON.stringify(body));
+    });
+    $('#calcCapture').style.display = 'none';
+    $('#calcSent').style.display = 'block';
+  });
 })();
 </script>
 </body>
