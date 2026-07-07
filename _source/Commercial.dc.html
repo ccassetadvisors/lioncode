@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<style>
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:400 700;font-display:swap;src:url("assets/fonts/font10.woff2") format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:400 700;font-display:swap;src:url("assets/fonts/font05.woff2") format('woff2')}
+@font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:url("assets/fonts/font14.woff2") format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url("assets/fonts/font19.woff2") format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url("assets/fonts/font24.woff2") format('woff2')}
+html{scroll-behavior:smooth}
+body{margin:0;background:#0A0806;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#EDE6D7;-webkit-font-smoothing:antialiased}
+a{color:#C7B186}a:hover{color:#EDE6D7}
+@keyframes rise{from{transform:translateY(114%);opacity:0}}
+@keyframes rev{from{opacity:0;transform:translateY(44px)}}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes cardLine{from{transform:scaleX(0)}}
+@keyframes corePulse{0%,100%{stroke-opacity:.85}50%{stroke-opacity:.45}}
+</style>
+</helmet>
+
+<!-- HUD -->
+<div style="position:fixed;top:0;left:0;right:0;height:58px;z-index:80;background:rgba(10,8,6,.88);backdrop-filter:blur(12px);border-bottom:1px solid rgba(199,177,134,.14);display:flex;align-items:center;gap:26px;padding:0 clamp(16px,3vw,32px);box-sizing:border-box">
+  <a href="C%26C%20Home%20v3.dc.html" style="text-decoration:none;color:#EDE6D7;font-family:'Cormorant Garamond',serif;font-size:23px;letter-spacing:-0.01em;white-space:nowrap">C<span style="color:#C7B186;font-style:italic">&amp;</span>C <span style="font-family:'Hanken Grotesk',sans-serif;font-size:9px;letter-spacing:.26em;font-weight:600;opacity:.6;margin-left:6px;vertical-align:2px">ASSET ADVISORS</span></a>
+  <div style="flex:1"></div>
+  <div style="display:flex;gap:22px;font-size:11.5px;font-weight:500;letter-spacing:.05em;align-items:center;flex-wrap:wrap">
+    <a href="Sell.dc.html" style="color:#EDE6D7;text-decoration:none">Sell</a>
+    <a href="Buy.dc.html" style="color:#EDE6D7;text-decoration:none">Buy</a>
+    <a href="Commercial.dc.html" style="color:#C7B186;text-decoration:none">Commercial</a>
+    <a href="Private%20Clients.dc.html" style="color:rgba(237,230,215,.5);text-decoration:none">Private Clients</a>
+    <a href="Firm.dc.html" style="color:#EDE6D7;text-decoration:none">The Firm</a>
+  </div>
+  <a href="tel:+14694799656" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:#C7B186;text-decoration:none;white-space:nowrap">(469) 479-9656</a>
+  <a href="#contact" style="border:1px solid rgba(237,230,215,.28);padding:9px 18px;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#EDE6D7;text-decoration:none;transition:border-color .4s,color .4s;white-space:nowrap" style-hover="border-color:#C7B186;color:#C7B186">Contact</a>
+</div>
+
+<!-- HERO · Dallas skyline -->
+<div data-screen-label="Commercial hero" style="position:relative;height:100svh;overflow:hidden;background:#0A0806">
+  <video ref="{{ heroVid }}" src="assets/skyline.mp4" autoplay="{{ true }}" muted="{{ true }}" loop="{{ true }}" playsinline="{{ true }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85"></video>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.7) 0%,rgba(10,8,6,.22) 45%,rgba(10,8,6,.92) 100%)"></div>
+  <div style="position:absolute;left:clamp(20px,4.5vw,56px);top:max(78px,12svh);font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.28em;color:rgba(237,230,215,.55);animation:fadeIn 1.4s .6s both">COMMERCIAL · A PARTNERSHIP MODEL</div>
+  <div style="position:absolute;left:clamp(20px,4.5vw,56px);right:clamp(20px,4.5vw,56px);bottom:max(10svh,64px)">
+    <div style="overflow:hidden;padding-bottom:.06em"><span style="display:inline-block;animation:rise 1.1s cubic-bezier(.22,1,.36,1) .4s both;font-family:'Cormorant Garamond',serif;font-size:clamp(36px,min(5.4vw,8.5svh),86px);line-height:1;letter-spacing:-0.02em;color:#EDE6D7;text-shadow:0 2px 28px rgba(10,8,6,.8)">We understand how buildings work.</span></div>
+    <div style="font-size:clamp(14.5px,1.3vw,17px);line-height:1.6;color:rgba(237,230,215,.75);margin-top:18px;max-width:640px;animation:fadeIn 1.2s 1s both;text-shadow:0 1px 16px rgba(10,8,6,.8)">C&amp;C at the center, a trusted network of specialists around it — directed by operators who run active commercial construction across DFW every day.</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-top:26px;flex-wrap:wrap;animation:fadeIn 1.2s 1.3s both">
+      <a href="#contact" data-hover="" style="background:#C7B186;color:#15130F;padding:16px 30px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:background .4s" style-hover="background:#EDE6D7">Discuss a requirement</a>
+      <a href="#model" data-hover="" style="border:1px solid rgba(237,230,215,.34);color:#EDE6D7;padding:15px 28px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:border-color .4s,color .4s" style-hover="border-color:#C7B186;color:#C7B186">The model</a>
+    </div>
+  </div>
+</div>
+
+<!-- THE MODEL · hub and spoke -->
+<div id="model" data-screen-label="The partnership model" style="background:#0C0A07;padding:clamp(120px,16vh,200px) clamp(20px,4.5vw,56px)">
+  <div style="max-width:1320px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:clamp(36px,5vw,80px);align-items:center">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.3em;color:rgba(199,177,134,.6)">THE MODEL</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.2vw,50px);line-height:1.08;color:#EDE6D7;margin-top:22px">One relationship at the hub. <span style="font-style:italic;color:#C7B186">The right specialist on every spoke.</span></div>
+      <div style="margin-top:44px;display:flex;flex-direction:column">
+        <div style="border-top:1px solid rgba(199,177,134,.16);padding:22px 0;transition:padding-left .4s" style-hover="padding-left:12px">
+          <div style="font-size:15.5px;font-weight:600;color:#EDE6D7">We understand how buildings work.</div>
+          <div style="font-size:14px;line-height:1.6;color:rgba(237,230,215,.6);margin-top:8px">We manage commercial construction across DFW daily — feasibility, TI cost, timelines. Ground-level intelligence you can't learn from a desk.</div>
+        </div>
+        <div style="border-top:1px solid rgba(199,177,134,.16);padding:22px 0;transition:padding-left .4s" style-hover="padding-left:12px">
+          <div style="font-size:15.5px;font-weight:600;color:#EDE6D7">The right specialist, every time.</div>
+          <div style="font-size:14px;line-height:1.6;color:rgba(237,230,215,.6);margin-top:8px">Commercial rewards specialization. We hold the relationship at the center and direct the vetted specialist for the asset, the market, and the deal.</div>
+        </div>
+        <div style="border-top:1px solid rgba(199,177,134,.16);border-bottom:1px solid rgba(199,177,134,.16);padding:22px 0;transition:padding-left .4s" style-hover="padding-left:12px">
+          <div style="font-size:15.5px;font-weight:600;color:#EDE6D7">On your side, through completion.</div>
+          <div style="font-size:14px;line-height:1.6;color:rgba(237,230,215,.6);margin-top:8px">Guide, qualify, connect, and stay involved — your interest represented from first conversation to close.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;animation:rev 1s cubic-bezier(.22,1,.36,1) both;animation-timeline:view();animation-range:entry 5% entry 35%">
+      <svg viewBox="0 0 520 412" style="display:block;width:min(100%,520px);height:auto;overflow:visible" aria-label="C&amp;C Brokerage at the hub of a specialist network">
+        <text x="260" y="26" text-anchor="middle" fill="rgba(237,230,215,.48)" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="2.8" style="text-transform:uppercase">ASSET MARKETS</text>
+        <text x="260" y="404" text-anchor="middle" fill="rgba(237,230,215,.48)" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="2.8">DISCIPLINES</text>
+        <line x1="213.8" y1="190.0" x2="85.7" y2="154.3" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
+        <line x1="240.8" y1="166.5" x2="187.4" y2="78.7" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
+        <line x1="279.2" y1="166.5" x2="332.6" y2="78.7" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
+        <line x1="306.2" y1="190.0" x2="434.3" y2="154.3" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
+        <line x1="213.8" y1="222.0" x2="85.7" y2="257.7" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
+        <line x1="260" y1="248.8" x2="260" y2="344" stroke="#C7B186" stroke-opacity=".9" stroke-width="1.8"></line>
+        <line x1="306.2" y1="222.0" x2="434.3" y2="257.7" stroke="#9DB0B4" stroke-opacity=".5" stroke-width="1.2"></line>
+        <circle cx="85.7" cy="154.3" r="4" fill="#9DB0B4"></circle>
+        <circle cx="187.4" cy="78.7" r="4" fill="#9DB0B4"></circle>
+        <circle cx="332.6" cy="78.7" r="4" fill="#9DB0B4"></circle>
+        <circle cx="434.3" cy="154.3" r="4" fill="#9DB0B4"></circle>
+        <circle cx="85.7" cy="257.7" r="4" fill="#9DB0B4"></circle>
+        <circle cx="260" cy="344" r="5.5" fill="#C7B186"></circle>
+        <circle cx="434.3" cy="257.7" r="4" fill="#9DB0B4"></circle>
+        <circle cx="260" cy="206" r="56" fill="rgba(12,10,7,.72)" stroke="#C7B186" stroke-width="1.2" style="animation:corePulse 4s ease-in-out infinite"></circle>
+        <text x="260" y="204" text-anchor="middle" fill="#EDE6D7" font-family="Cormorant Garamond,serif" font-size="31" letter-spacing="-0.3">C&amp;C</text>
+        <text x="260" y="228" text-anchor="middle" fill="#C7B186" font-family="IBM Plex Mono,monospace" font-size="11.5" letter-spacing="2.3">BROKERAGE</text>
+        <text x="71.8" y="138.3" text-anchor="end" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Industrial</text>
+        <text x="181.6" y="62.7" text-anchor="end" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Office</text>
+        <text x="338.4" y="62.7" text-anchor="start" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Retail</text>
+        <text x="448.2" y="138.3" text-anchor="start" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Multifamily</text>
+        <text x="71.8" y="283.7" text-anchor="end" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Lending</text>
+        <text x="260" y="370" text-anchor="middle" fill="#C7B186" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="16" letter-spacing=".6">Construction</text>
+        <text x="448.2" y="283.7" text-anchor="start" fill="rgba(237,230,215,.94)" font-family="Hanken Grotesk,sans-serif" font-weight="600" font-size="15" letter-spacing=".6">Legal</text>
+      </svg>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;color:rgba(237,230,215,.5);margin-top:18px;text-align:center;max-width:420px;line-height:1.8">ONE RELATIONSHIP AT THE HUB — THE RIGHT SPECIALIST FOR EVERY ASSET CLASS</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT WE HANDLE -->
+<div data-screen-label="What we handle" style="background:#0A0806;padding:clamp(120px,16vh,200px) clamp(20px,4.5vw,56px);border-top:1px solid rgba(199,177,134,.1)">
+  <div style="max-width:880px;margin:0 auto">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.3em;color:rgba(199,177,134,.6)">WHAT WE HANDLE</div>
+    <div style="margin-top:40px;display:flex;flex-direction:column">
+      <div style="border-top:1px solid rgba(199,177,134,.16);padding:24px 0;display:flex;align-items:baseline;gap:24px;transition:padding-left .4s" style-hover="padding-left:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(199,177,134,.65);min-width:32px">01</span><span style="font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.2vw,29px);color:#EDE6D7">Site &amp; feasibility advisory</span></div>
+      <div style="border-top:1px solid rgba(199,177,134,.16);padding:24px 0;display:flex;align-items:baseline;gap:24px;transition:padding-left .4s" style-hover="padding-left:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(199,177,134,.65);min-width:32px">02</span><span style="font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.2vw,29px);color:#EDE6D7">Tenant &amp; landlord representation</span></div>
+      <div style="border-top:1px solid rgba(199,177,134,.16);padding:24px 0;display:flex;align-items:baseline;gap:24px;transition:padding-left .4s" style-hover="padding-left:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(199,177,134,.65);min-width:32px">03</span><span style="font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.2vw,29px);color:#EDE6D7">Build-out &amp; TI guidance</span></div>
+      <div style="border-top:1px solid rgba(199,177,134,.16);padding:24px 0;display:flex;align-items:baseline;gap:24px;transition:padding-left .4s" style-hover="padding-left:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(199,177,134,.65);min-width:32px">04</span><span style="font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.2vw,29px);color:#EDE6D7">Specialist network &amp; referral direction</span></div>
+      <div style="border-top:1px solid rgba(199,177,134,.16);border-bottom:1px solid rgba(199,177,134,.16);padding:24px 0;display:flex;align-items:baseline;gap:24px;transition:padding-left .4s" style-hover="padding-left:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:rgba(199,177,134,.65);min-width:32px">05</span><span style="font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.2vw,29px);color:#EDE6D7">Acquisition &amp; disposition</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT / FOOTER -->
+<div id="contact" data-screen-label="Contact" style="background:#0C0A07;border-top:1px solid rgba(199,177,134,.14);padding:clamp(90px,12vh,140px) clamp(20px,4.5vw,56px)">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:clamp(28px,5vw,72px);flex-wrap:wrap">
+    <div style="flex:1 1 340px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3vw,44px);line-height:1.06;color:#EDE6D7">Discuss a commercial requirement.</div>
+      <div style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);margin-top:14px;max-width:420px">Directed by Dalton and Irma. A real person replies within one business day.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <a href="C%26C%20Home%20v3.dc.html#sc-close" data-hover="" style="background:#C7B186;color:#15130F;padding:16px 32px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;text-align:center;transition:background .4s" style-hover="background:#EDE6D7">Start a conversation →</a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:2;color:rgba(237,230,215,.75);text-align:center">
+        <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a> · <a href="mailto:dalton@ccassetadvisors.com" style="color:rgba(237,230,215,.75);text-decoration:none">dalton@ccassetadvisors.com</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1100px;margin:72px auto 0;border-top:1px solid rgba(237,230,215,.12);padding-top:28px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:11.5px;color:rgba(237,230,215,.45)">
+    <div>C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Broker-led, family-owned</div>
+    <div style="display:flex;gap:22px;flex-wrap:wrap">
+      <a href="https://www.trec.texas.gov/forms/information-about-brokerage-services" target="_blank" style="color:rgba(237,230,215,.45);text-decoration:underline;text-underline-offset:3px">TREC IABS</a>
+      <a href="https://www.trec.texas.gov/forms/consumer-protection-notice" target="_blank" style="color:rgba(237,230,215,.45);text-decoration:underline;text-underline-offset:3px">Consumer Protection Notice</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  heroVid = React.createRef();
+
+  componentDidMount() {
+    this.playTries = 0;
+    this.playT = setInterval(() => {
+      const v = this.heroVid.current;
+      this.playTries++;
+      if (v) v.playbackRate = 0.6;
+      if (v && v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+      if ((v && !v.paused) || this.playTries > 14) clearInterval(this.playT);
+    }, 600);
+  }
+
+  componentWillUnmount() { clearInterval(this.playT); }
+
+  renderVals() {
+    return { heroVid: this.heroVid };
+  }
+}
+</script>
+</body>
+</html>
