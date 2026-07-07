@@ -6,7 +6,7 @@
 
   /* ---------- mobile menu (built once, shared by every page) ---------- */
   var MENU = [
-    { href: 'index.html', label: 'Home', sub: 'The cold open' },
+    { href: 'index.html', label: 'Home', sub: 'Start here' },
     { href: 'sell.html', label: 'Sell', sub: 'Priced from experience' },
     { href: 'buy.html', label: 'Buy', sub: 'Your first home' },
     { href: 'commercial.html', label: 'Commercial', sub: 'The partnership model' },
@@ -115,7 +115,15 @@
         }
       });
     }, { rootMargin: '200px 0px' });
-    vids.forEach(function (v) { vio.observe(v); });
+    vids.forEach(function (v) {
+      vio.observe(v);
+      /* some engines resolve play() before the data is ready — retry once decodable */
+      v.addEventListener('canplay', function () {
+        if ((v.autoplay || v.hasAttribute('data-autoplay')) && v.paused) {
+          var p = v.play(); if (p && p.catch) p.catch(function () {});
+        }
+      });
+    });
   } else {
     vids.forEach(function (v) { if (!v.src && v.getAttribute('data-src')) v.src = v.getAttribute('data-src'); });
   }
@@ -248,8 +256,9 @@
     });
   }
 
-  /* ---------- ember particles ---------- */
-  if (fine && !rm && !window.matchMedia('(max-width:920px)').matches) {
+  /* ---------- ember particles (light set on mobile) ---------- */
+  if (!rm) {
+    var lite = !fine || window.matchMedia('(max-width:920px)').matches;
     document.querySelectorAll('.embers').forEach(function (cv) {
       var ctx = cv.getContext('2d');
       var W, H, parts = [], running = false, rafId = null;
@@ -282,14 +291,14 @@
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, 6.2832);
           ctx.fillStyle = 'rgba(222,178,110,' + glow.toFixed(3) + ')';
-          ctx.shadowColor = 'rgba(214,150,72,.8)';
-          ctx.shadowBlur = 5;
+          if (!lite) { ctx.shadowColor = 'rgba(214,150,72,.8)'; ctx.shadowBlur = 5; }
           ctx.fill();
         }
         rafId = requestAnimationFrame(tick);
       }
       size();
-      for (var i = 0; i < 26; i++) parts.push(spawn(true));
+      var N = lite ? 12 : 26;
+      for (var i = 0; i < N; i++) parts.push(spawn(true));
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (e) {
           running = e.isIntersecting;
@@ -324,7 +333,8 @@
   }
 
   /* ---------- inline lead form (drop <div class="lead-mini" data-source="x"> anywhere) ---------- */
-  document.querySelectorAll('.lead-mini').forEach(function (box) {
+  window.CC = window.CC || {};
+  window.CC.buildLeadMini = function (box) {
     var src = box.getAttribute('data-source') || location.pathname;
     box.innerHTML =
       '<form novalidate>' +
@@ -352,5 +362,242 @@
       form.style.display = 'none';
       box.querySelector('.sent-note').style.display = 'block';
     });
-  });
+  };
+  document.querySelectorAll('.lead-mini').forEach(window.CC.buildLeadMini);
+})();
+
+/* ============================================================
+   V3 — pizazz layer: word-cascade headings, shared ember cursor,
+   hero pointer parallax
+   ============================================================ */
+(function () {
+  'use strict';
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  /* ---------- word-cascade on section headings ----------
+     Runs before any .reveal has intersected; the v1 observer still adds
+     .in to these nodes, which now drives the per-word cascade instead. */
+  if (!rm) {
+    document.querySelectorAll('h2.reveal').forEach(function (h) {
+      if (h.classList.contains('gold-text')) return; /* gradient-clipped text must stay whole */
+      var wi = 0;
+      function wrapWords(node) {
+        Array.prototype.slice.call(node.childNodes).forEach(function (ch) {
+          if (ch.nodeType === 3) {
+            var frag = document.createDocumentFragment();
+            ch.textContent.split(/(\s+)/).forEach(function (tok) {
+              if (!tok) return;
+              if (/^\s+$/.test(tok)) { frag.appendChild(document.createTextNode(' ')); return; }
+              var w = document.createElement('span');
+              w.className = 'w';
+              w.style.setProperty('--wi', wi++);
+              w.textContent = tok;
+              frag.appendChild(w);
+            });
+            node.replaceChild(frag, ch);
+          } else if (ch.nodeType === 1) {
+            /* gradient-clipped or styled children cascade as one block so
+               background-clip:text is never broken apart */
+            ch.classList.add('w');
+            ch.style.setProperty('--wi', wi++);
+          }
+        });
+      }
+      wrapWords(h);
+      h.classList.remove('reveal');
+      h.classList.add('split-words');
+    });
+  }
+
+  /* ---------- ember ring cursor on every page ---------- */
+  if (fine && !rm && !document.getElementById('cursor')) {
+    var cur = document.createElement('div');
+    cur.className = 'cursor-ring';
+    cur.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(cur);
+    var mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my, hov = false;
+    window.addEventListener('mousemove', function (e) {
+      mx = e.clientX; my = e.clientY;
+      hov = !!(e.target && e.target.closest && e.target.closest('a,button,input,textarea,[role="button"]'));
+    }, { passive: true });
+    (function loop() {
+      cx += (mx - cx) * 0.16; cy += (my - cy) * 0.16;
+      cur.style.transform = 'translate3d(' + (cx - 17) + 'px,' + (cy - 17) + 'px,0) scale(' + (hov ? 1.8 : 1) + ')';
+      cur.style.borderColor = hov ? '#C7B186' : 'rgba(199,177,134,.5)';
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* ---------- gentle pointer parallax on hero media ---------- */
+  if (fine && !rm) {
+    var hero = document.querySelector('main section:first-of-type');
+    var media = hero && (hero.querySelector('video, img'));
+    if (media && !document.getElementById('heroPara')) {
+      media.style.willChange = 'transform';
+      var hq = false;
+      hero.addEventListener('pointermove', function (e) {
+        if (hq) return; hq = true;
+        requestAnimationFrame(function () {
+          hq = false;
+          var r = hero.getBoundingClientRect();
+          var x = (e.clientX - r.left) / r.width - 0.5;
+          var y = (e.clientY - r.top) / r.height - 0.5;
+          media.style.transform = 'scale(1.05) translate(' + (x * -14).toFixed(1) + 'px,' + (y * -10).toFixed(1) + 'px)';
+        });
+      });
+    }
+  }
+})();
+
+/* ============================================================
+   V4 — signature layer: session intro, page transitions,
+   bottom-sheet lead capture, label decode, haptics, gyro parallax
+   ============================================================ */
+(function () {
+  'use strict';
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var coarse = window.matchMedia('(pointer:coarse)').matches;
+
+  /* ---------- cinematic veil: full seal once per session, fast on transitions ---------- */
+  var seen = false, fromPT = false;
+  try {
+    seen = sessionStorage.getItem('cc-intro') === '1';
+    fromPT = sessionStorage.getItem('cc-pt') === '1';
+    sessionStorage.setItem('cc-intro', '1');
+    sessionStorage.removeItem('cc-pt');
+  } catch (e) {}
+  if (!rm && (!seen || fromPT)) {
+    var veil = document.createElement('div');
+    veil.className = 'veil' + (fromPT ? ' veil--fast' : '');
+    veil.setAttribute('aria-hidden', 'true');
+    veil.innerHTML =
+      '<div style="position:relative;display:flex;align-items:center;justify-content:center">' +
+      '<svg class="veil-seal" viewBox="0 0 110 110"><circle cx="55" cy="55" r="53"/><circle class="inner" cx="55" cy="55" r="47"/></svg>' +
+      '<div class="veil-mark">C<em>&amp;</em>C</div></div>' +
+      '<div class="veil-line"></div>' +
+      '<div class="veil-sub">ASSET ADVISORS</div>';
+    document.body.appendChild(veil);
+    veil.classList.add('pending');
+    setTimeout(function () { veil.classList.add('out'); }, fromPT ? 60 : 1150);
+    veil.addEventListener('animationend', function (e) {
+      if (e.animationName === 'veilUp') veil.remove();
+    });
+  }
+
+  /* ---------- gold-wipe page transitions on internal links ---------- */
+  if (!rm) {
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a[href$=".html"], a[href*=".html#"]');
+      if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      var url = new URL(a.href, location.href);
+      if (url.origin !== location.origin) return;
+      if (url.pathname === location.pathname && url.hash) return; /* same-page anchor */
+      e.preventDefault();
+      try { sessionStorage.setItem('cc-pt', '1'); } catch (err) {}
+      var pt = document.createElement('div');
+      pt.className = 'pt-out';
+      document.body.appendChild(pt);
+      setTimeout(function () { location.href = url.href; }, 390);
+    }, true);
+  }
+
+  /* ---------- bottom-sheet quick lead form (mobile "Book" taps) ---------- */
+  var sheet = document.createElement('dialog');
+  sheet.className = 'sheet';
+  sheet.innerHTML =
+    '<div class="sheet-inner">' +
+    '<div class="sheet-handle" aria-hidden="true"></div>' +
+    '<div class="sheet-head"><b>Book a consultation</b>' +
+    '<button type="button" class="sheet-x" aria-label="Close">✕</button></div>' +
+    '<div class="lead-mini" data-source="quick-sheet"></div></div>';
+  document.body.appendChild(sheet);
+  window.CC.buildLeadMini(sheet.querySelector('.lead-mini'));
+  function closeSheet() {
+    sheet.classList.add('closing');
+    setTimeout(function () { sheet.close(); sheet.classList.remove('closing'); }, 280);
+  }
+  window.CC.openSheet = function () { if (!sheet.open) { sheet.showModal(); } };
+  sheet.querySelector('.sheet-x').addEventListener('click', closeSheet);
+  sheet.addEventListener('click', function (e) { if (e.target === sheet) closeSheet(); });
+  sheet.addEventListener('cancel', function (e) { e.preventDefault(); closeSheet(); });
+  /* drag the handle down to dismiss */
+  (function () {
+    var h = sheet.querySelector('.sheet-handle'), inner = sheet.querySelector('.sheet-inner');
+    var y0 = null;
+    h.addEventListener('pointerdown', function (e) { y0 = e.clientY; h.setPointerCapture(e.pointerId); });
+    h.addEventListener('pointermove', function (e) {
+      if (y0 === null) return;
+      var d = Math.max(0, e.clientY - y0);
+      inner.style.transform = 'translateY(' + d + 'px)';
+    });
+    h.addEventListener('pointerup', function (e) {
+      var d = Math.max(0, e.clientY - y0); y0 = null;
+      inner.style.transform = '';
+      if (d > 80) closeSheet();
+    });
+  })();
+  /* on touch devices, consult CTAs open the sheet instead of jumping the page */
+  if (coarse) {
+    document.querySelectorAll('.sticky-cta a[href$="#contact"], .sticky-cta a[href="#contact"]').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); window.CC.openSheet(); });
+    });
+  }
+
+  /* ---------- mono labels decode themselves in ---------- */
+  if (!rm && 'IntersectionObserver' in window) {
+    var GLYPHS = 'ABCDEFGHKMNPRSTUVWXYZ0123456789·—#$';
+    var dio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        dio.unobserve(e.target);
+        var el = e.target, txt = el.getAttribute('data-decode');
+        var t0 = performance.now(), dur = 750;
+        (function step(t) {
+          var k = Math.min(1, (t - t0) / dur);
+          var solid = Math.floor(txt.length * k);
+          var out = txt.slice(0, solid);
+          for (var i = solid; i < txt.length; i++) {
+            out += txt[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+          }
+          el.textContent = out;
+          if (k < 1) requestAnimationFrame(step); else el.textContent = txt;
+        })(t0);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.mono-label').forEach(function (el) {
+      if (el.children.length) return;              /* text-only labels */
+      var txt = el.textContent.trim();
+      if (!txt || txt.length > 64) return;
+      el.setAttribute('data-decode', txt);
+      dio.observe(el);
+    });
+  }
+
+  /* ---------- haptic tick on primary taps ---------- */
+  if (coarse && navigator.vibrate) {
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.btn, .chip, .faq-q, .mm-row, .downchip')) {
+        try { navigator.vibrate(8); } catch (err) {}
+      }
+    }, { passive: true });
+  }
+
+  /* ---------- gyroscope parallax on phone heroes ---------- */
+  if (coarse && !rm) {
+    var hero = document.querySelector('main section:first-of-type');
+    var media = hero && hero.querySelector('video, img');
+    if (media) {
+      var gq = false;
+      window.addEventListener('deviceorientation', function (e) {
+        if (gq || e.beta === null) return; gq = true;
+        requestAnimationFrame(function () {
+          gq = false;
+          var x = Math.max(-14, Math.min(14, (e.gamma || 0) * 0.55));
+          var y = Math.max(-10, Math.min(10, ((e.beta || 0) - 40) * 0.3));
+          media.style.transform = 'scale(1.06) translate(' + (-x).toFixed(1) + 'px,' + (-y).toFixed(1) + 'px)';
+        });
+      }, { passive: true });
+    }
+  }
 })();

@@ -18,6 +18,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://ccassetadvisors.com/assets/img/og.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0A0806">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/img/icon-180.png">
 <link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/hanken.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/plexmono-400.woff2" as="font" type="font/woff2" crossorigin>
@@ -170,7 +173,7 @@
     <span style="width:7px;height:7px;border-radius:50%;background:#B0563C;animation:blinkRec 1.7s infinite"></span>
     <span id="tc">00:00:00:00</span>
   </div>
-  <div id="sceneLabel" class="hide-m" style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#C7B186;white-space:nowrap;min-width:190px">SC 01 · COLD OPEN</div>
+  <div id="sceneLabel" class="hide-m" style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#C7B186;white-space:nowrap;min-width:190px">01 · WELCOME</div>
   <div id="rail" style="flex:1;display:flex;align-items:center;gap:5px"></div>
   <div class="hide-m" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:rgba(237,230,215,.38);white-space:nowrap">RUNTIME 04:26 · DFW, TX</div>
 </div>
@@ -179,7 +182,7 @@
 <div class="grain" aria-hidden="true"></div>
 
 <main id="main">
-<!-- ================= SC 01 · COLD OPEN ================= -->
+<!-- ================= SC 01 · WELCOME ================= -->
 <section id="sc-open" data-scene="0" style="position:relative;height:320vh">
   <div style="position:sticky;top:0;height:100svh;overflow:hidden;background:#0A0806">
     <div id="heroPara" style="position:absolute;inset:-30px;animation:zoomSlow 38s ease-in-out infinite alternate;will-change:transform">
@@ -193,7 +196,6 @@
     <div style="position:absolute;bottom:0;left:0;right:0;height:13vh;background:#050403;z-index:5;transform-origin:bottom;animation:barOpen 2.2s cubic-bezier(.76,0,.24,1) .5s both"></div>
 
     <canvas class="embers" aria-hidden="true"></canvas>
-    <div class="hide-m" style="position:absolute;left:var(--pad-x);top:max(74px,11svh);font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:rgba(237,230,215,.5);animation:fadeIn 1.6s 1.2s both">SC 01 · COLD OPEN · DALLAS–FORT WORTH</div>
 
     <!-- beat 1 -->
     <div id="heroB1" style="position:absolute;inset:0;pointer-events:none;will-change:opacity,transform">
@@ -266,7 +268,7 @@
 <div class="ticker" aria-hidden="true"><div class="ticker-track"><span>DALLAS</span><span>FORT WORTH</span><span>ROCKWALL</span><span>GRAND PRAIRIE</span><span>RESIDENTIAL</span><span>COMMERCIAL</span><span>INVESTMENT</span><span>BROKER-LED</span><span>FAMILY-OWNED</span><span>SE HABLA ESPAÑOL</span><span>DALLAS</span><span>FORT WORTH</span><span>ROCKWALL</span><span>GRAND PRAIRIE</span><span>RESIDENTIAL</span><span>COMMERCIAL</span><span>INVESTMENT</span><span>BROKER-LED</span><span>FAMILY-OWNED</span><span>SE HABLA ESPAÑOL</span></div></div>
 
 <!-- ================= SC 03 · THE FIRM ================= -->
-<section id="sc-firm" data-scene="2" style="position:relative;background:#F2EEE6;padding:clamp(130px,18vh,220px) var(--pad-x)">
+<section id="sc-firm" data-scene="2" class="ghost-word ghost-word--paper" data-word="The Firm" style="position:relative;background:#F2EEE6;padding:clamp(130px,18vh,220px) var(--pad-x)">
   <div class="wrap-wide">
     <div class="mono-label mono-label--paper reveal" style="margin-bottom:30px">SC 03 · THE FIRM</div>
     <h2 class="h-display h-display--paper reveal" style="font-size:clamp(36px,4.6vw,74px);line-height:1.02;max-width:1000px">We run the operation — <em>brokerage, construction, underwriting.</em></h2>
@@ -302,7 +304,7 @@
 </section>
 
 <!-- ================= SC 04 · THE RECORD / EN DOS IDIOMAS ================= -->
-<section id="sc-record" data-scene="3" style="position:relative;background:#0A0806;padding:clamp(140px,20vh,240px) var(--pad-x)">
+<section id="sc-record" data-scene="3" class="ghost-word" data-word="Texas" style="position:relative;background:#0A0806;padding:clamp(140px,20vh,240px) var(--pad-x)">
   <div class="wrap" style="text-align:center">
     <div class="stats3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:clamp(28px,4vw,56px)">
       <div class="reveal">
@@ -422,7 +424,7 @@
 </section>
 
 <!-- ================= SC 08 · CLOSE ================= -->
-<section id="contact" data-scene="7" style="position:relative;background:#0A0806;padding:110px var(--pad-x) 90px">
+<section id="contact" data-scene="7" class="amp-ghost" style="position:relative;background:#0A0806;padding:110px var(--pad-x) 90px">
   <div class="wrap-wide">
     <div class="reveal" style="display:flex;align-items:center;gap:clamp(24px,4vw,60px);border:1px solid rgba(237,230,215,.12);padding:clamp(24px,3.5vw,44px);margin-bottom:96px;flex-wrap:wrap">
       <div style="flex:1 1 320px">
@@ -529,8 +531,8 @@
     { src: 'assets/img/still-08-dining.jpg',    cap: 'Dining — staged' },
     { src: 'assets/img/still-09-fireside.jpg',  cap: 'Fireside — evening' }
   ];
-  var SCENES = ['SC 01 · COLD OPEN', 'SC 02 · THE WORK', 'SC 03 · THE FIRM', 'SC 04 · EN DOS IDIOMAS',
-    'SC 05 · FOR BUYERS', 'SC 06 · FOR SELLERS', 'SC 07 · THE MIRROR', 'SC 08 · CLOSE'];
+  var SCENES = ['01 · WELCOME', '02 · THE WORK', '03 · THE FIRM', '04 · EN DOS IDIOMAS',
+    '05 · FOR BUYERS', '06 · FOR SELLERS', '07 · TWO DOORS', '08 · CONTACT'];
   var BENCH = ['ASSOCIATE AGENTS', 'ANALYSTS', 'MEDIA & FILM', 'LEGAL', 'LENDING', 'TITLE', 'INSPECTION', 'COMMERCIAL TRADES', 'BROKERAGE PARTNERS'];
 
   /* ---------- inject reel stills ---------- */
