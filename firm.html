@@ -43,8 +43,6 @@
 }
 </script>
 <style>
-.grain{position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");animation:grainShift .9s steps(2) infinite}
-@media (max-width:920px),(pointer:coarse),(prefers-reduced-motion:reduce){.grain{display:none}}
 .partner{border-top:1px solid rgba(199,177,134,.22);width:100%;background:none;border-left:none;border-right:none;border-bottom:none;padding:clamp(28px,4vh,44px) 0;cursor:pointer;text-align:left;font-family:var(--sans);color:var(--bone)}
 .partner-name{font-family:var(--serif);font-size:clamp(32px,4.6vw,74px);line-height:1;letter-spacing:-0.02em;color:#EDE6D7;transition:color .5s,transform .5s var(--ease-out)}
 .partner.open .partner-name{color:#C7B186;transform:translateX(10px)}

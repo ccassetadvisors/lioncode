@@ -10,7 +10,7 @@
     { href: 'sell.html', label: 'Sell', sub: 'Priced from experience' },
     { href: 'buy.html', label: 'Buy', sub: 'Your first home' },
     { href: 'commercial.html', label: 'Commercial', sub: 'The partnership model' },
-    { href: 'private-clients.html', label: 'Private Clients', sub: 'Quiet portfolio work' },
+    { href: 'private-clients.html', label: 'Private Clients', sub: 'Without the payroll' },
     { href: 'firm.html', label: 'The Firm', sub: 'Three partners' }
   ];
   var menuEl = document.querySelector('.mobile-menu');
@@ -97,14 +97,16 @@
     });
   });
 
-  /* ---------- videos: lazy load + in-view play/pause ---------- */
-  var vids = document.querySelectorAll('video[data-src]');
+  /* ---------- videos: lazy load + in-view play/pause ----------
+     Every background video (lazy data-src AND eager autoplay heroes) pauses
+     when off-screen — decoding an invisible video is pure jank. */
+  var vids = document.querySelectorAll('video[data-src], video[autoplay]');
   if ('IntersectionObserver' in window && vids.length) {
     var vio = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         var v = e.target;
         if (e.isIntersecting) {
-          if (!v.src) { v.src = v.getAttribute('data-src'); v.load(); }
+          if (!v.src && v.getAttribute('data-src')) { v.src = v.getAttribute('data-src'); v.load(); }
           if (v.autoplay || v.hasAttribute('data-autoplay')) {
             var p = v.play(); if (p && p.catch) p.catch(function () {});
           }
@@ -115,7 +117,7 @@
     }, { rootMargin: '200px 0px' });
     vids.forEach(function (v) { vio.observe(v); });
   } else {
-    vids.forEach(function (v) { v.src = v.getAttribute('data-src'); });
+    vids.forEach(function (v) { if (!v.src && v.getAttribute('data-src')) v.src = v.getAttribute('data-src'); });
   }
 
   /* one gentle autoplay nudge on first interaction (iOS low-power mode etc.) */

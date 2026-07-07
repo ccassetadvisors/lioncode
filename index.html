@@ -62,11 +62,10 @@
 @media (hover:hover){.reel-frame:hover img{transform:scale(1.05)}}
 .reel-cap{position:absolute;left:0;right:0;bottom:0;padding:40px 18px 13px;background:linear-gradient(180deg,transparent,rgba(10,8,6,.82));display:flex;align-items:baseline;justify-content:space-between}
 .mirror-panel{transition:flex-grow .9s var(--ease-out);overflow:hidden}
-.grain{position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.055;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");animation:grainShift .9s steps(2) infinite}
 .cursor-ring{position:fixed;top:0;left:0;width:34px;height:34px;border:1px solid rgba(199,177,134,.55);border-radius:50%;pointer-events:none;z-index:99;will-change:transform;display:flex;align-items:center;justify-content:center}
 .cursor-ring::before{content:'';width:4px;height:4px;border-radius:50%;background:#C7B186;box-shadow:0 0 12px 2px rgba(214,150,72,.65)}
-@media (max-width:920px),(pointer:coarse){.grain,.cursor-ring{display:none}.hud-bottom .hide-m{display:none}}
-@media (prefers-reduced-motion:reduce){.grain,.cursor-ring{display:none}}
+@media (max-width:920px),(pointer:coarse){.cursor-ring{display:none}.hud-bottom .hide-m{display:none}}
+@media (prefers-reduced-motion:reduce){.cursor-ring{display:none}}
 .hud-bottom{position:fixed;bottom:0;left:0;right:0;height:50px;z-index:80;background:rgba(10,8,6,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(199,177,134,.14);display:flex;align-items:center;gap:20px;padding:0 clamp(16px,3vw,32px)}
 .sticky-cta{bottom:64px}
 
@@ -106,6 +105,10 @@
 
   /* bench chips tighter */
   #benchChips span{padding:6px 10px!important;font-size:9px!important}
+
+  /* sellers: copy centers on the fire, shorter pin */
+  #sc-sellers{height:100svh!important}
+  .sell-copy{left:50%!important;top:50%!important;width:min(92vw,680px)!important}
 
   /* mirror panels: compact */
   #mirrorL,#mirrorR{padding:44px var(--pad-x)!important}
@@ -222,18 +225,18 @@
       <div id="workTrack" style="display:flex;align-items:stretch;gap:10px;width:max-content;padding:0 var(--pad-x);will-change:transform">
         <div style="flex:none;width:min(58vw,470px);height:58svh;display:flex;flex-direction:column;justify-content:center;gap:18px;padding-right:5vw">
           <h2 class="h-display" style="font-size:clamp(34px,3.4vw,56px);line-height:1.04;letter-spacing:-0.015em">Homes, <em>as we present them.</em></h2>
-          <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:rgba(237,230,215,.4)">NINE STILLS · ALL IN-HOUSE</div>
+          <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:rgba(237,230,215,.4)">EIGHT STILLS · ALL IN-HOUSE</div>
         </div>
         <!-- stills injected by JS from STILLS data -->
         <div style="flex:none;width:min(76vw,660px);height:58svh;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:0 4vw">
-          <p style="margin:0;font-family:var(--serif);font-size:clamp(28px,3vw,46px);line-height:1.1;color:#EDE6D7">The advisory is senior. The presentation matches it — <em style="color:#C7B186">film, stills, and social cuts, all produced in-house.</em></p>
+          <p style="margin:0;font-family:var(--serif);font-size:clamp(28px,3vw,46px);line-height:1.1;color:#EDE6D7">Film, stills, and social cuts — <em style="color:#C7B186">all produced in-house.</em></p>
           <p style="margin:0;font-size:15px;line-height:1.6;color:rgba(237,230,215,.6);max-width:480px">Most firms outsource this. We built a studio instead — every listing launches like a property worth watching, because to someone, it is.</p>
           <a href="sell.html" style="font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#C7B186;text-decoration:none;border-bottom:1px solid rgba(199,177,134,.5);padding-bottom:4px;align-self:flex-start">See a full launch →</a>
         </div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:18px;padding:22px var(--pad-x) 70px">
-      <div id="workCount" style="font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:rgba(199,177,134,.7);white-space:nowrap">01 / 11</div>
+      <div id="workCount" style="font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:rgba(199,177,134,.7);white-space:nowrap">01 / 10</div>
       <div style="flex:1;height:1px;background:rgba(237,230,215,.12);position:relative;overflow:hidden">
         <div id="workProg" style="position:absolute;inset:0;background:#C7B186;transform:scaleX(0);transform-origin:left;will-change:transform"></div>
       </div>
@@ -304,7 +307,7 @@
 
 <!-- ================= SC 05 · FOR BUYERS ================= -->
 <section id="sc-buyers" data-scene="4" style="position:relative;min-height:100svh;overflow:hidden;display:flex;align-items:center;padding:clamp(110px,14vh,170px) var(--pad-x);background:#0A0806">
-  <img src="assets/img/bg-buyers.jpg" alt="" loading="lazy" style="position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover">
+  <img src="assets/img/great-room.jpg" alt="" loading="lazy" style="position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;animation:para 1s linear both;animation-timeline:view();animation-range:cover">
   <div style="position:absolute;inset:0;background:linear-gradient(270deg,rgba(10,8,6,.95) 0%,rgba(10,8,6,.82) 38%,rgba(10,8,6,.42) 68%,rgba(10,8,6,.12) 100%)"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.5) 0%,transparent 30%,transparent 68%,rgba(10,8,6,.62) 100%)"></div>
   <div style="position:relative;max-width:1320px;margin:0 auto;width:100%;display:flex;justify-content:flex-end">
@@ -326,19 +329,22 @@
 </section>
 
 <!-- ================= SC 06 · FOR SELLERS ================= -->
-<section id="sc-sellers" data-scene="5" style="position:relative;min-height:100svh;overflow:hidden;background:#0A0806;display:flex;align-items:center;justify-content:center;padding:clamp(110px,14vh,170px) var(--pad-x)">
-  <img src="assets/img/bg-sellers.jpg" alt="" loading="lazy" style="position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;object-position:center 60%">
-  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 90% 90% at 50% 46%,rgba(10,8,6,.45) 0%,rgba(10,8,6,.3) 45%,rgba(10,8,6,.72) 100%)"></div>
-  <div style="position:relative;width:min(84vw,680px);text-align:center">
-    <div class="reveal-fade" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:rgba(199,177,134,.85)">SC 06 · FOR SELLERS</div>
-    <h2 class="h-display reveal" style="font-size:clamp(38px,4.6vw,74px);line-height:1.04;letter-spacing:-0.018em;margin-top:22px;text-shadow:0 2px 30px rgba(10,8,6,.9)">Selling in a<br>buyer's market.</h2>
-    <p class="reveal" style="font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.9vw,25px);color:#C7B186;margin:18px 0 0;text-shadow:0 1px 20px rgba(10,8,6,.9)">It isn't 2021. We'll be the first to say so.</p>
-    <div class="reveal-fade" style="display:flex;align-items:center;justify-content:center;gap:clamp(12px,2vw,20px);margin-top:26px;font-family:var(--mono);font-size:clamp(8.5px,0.95vw,11px);letter-spacing:.22em;color:rgba(237,230,215,.8);white-space:nowrap;flex-wrap:wrap">
-      <span>PRICED FROM EXPERIENCE</span><span style="color:rgba(199,177,134,.7)">·</span><span>PRESENTED LIKE A PREMIERE</span><span style="color:rgba(199,177,134,.7)">·</span><span>PARTNER-NEGOTIATED</span>
-    </div>
-    <div class="reveal" style="display:flex;align-items:center;justify-content:center;gap:22px;margin-top:34px;flex-wrap:wrap">
-      <a href="sell.html" class="btn btn-gold">Sell with C&amp;C&nbsp;&nbsp;→</a>
-      <a href="sell.html" class="link-underline">The full approach</a>
+<section id="sc-sellers" data-scene="5" style="position:relative;height:130svh;overflow:hidden;background:#0A0806">
+  <div style="position:sticky;top:0;height:100svh;overflow:hidden">
+    <img src="assets/img/fireside.jpg" alt="" loading="lazy" style="position:absolute;left:0;top:-6%;width:100%;height:112%;object-fit:cover;object-position:38% 68%;animation:para 1s linear both;animation-timeline:view();animation-range:cover">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 90% 90% at 64% 46%,rgba(10,8,6,.32) 0%,transparent 45%,rgba(10,8,6,.45) 100%)"></div>
+    <!-- copy written on the dark wall above the fire -->
+    <div class="sell-copy" style="position:absolute;left:63%;top:44%;transform:translate(-50%,-50%);width:min(84vw,680px);text-align:center">
+      <div class="reveal-fade" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:rgba(199,177,134,.85)">SC 06 · FOR SELLERS</div>
+      <h2 class="h-display reveal" style="font-size:clamp(38px,4.6vw,74px);line-height:1.04;letter-spacing:-0.018em;margin-top:22px">Selling in a<br>buyer's market.</h2>
+      <p class="reveal" style="font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.9vw,25px);color:#C7B186;margin:18px 0 0">It isn't 2021. We'll be the first to say so.</p>
+      <div class="reveal-fade" style="display:flex;align-items:center;justify-content:center;gap:clamp(12px,2vw,20px);margin-top:26px;font-family:var(--mono);font-size:clamp(8.5px,0.95vw,11px);letter-spacing:.22em;color:rgba(237,230,215,.8);white-space:nowrap;flex-wrap:wrap">
+        <span>PRICED FROM EXPERIENCE</span><span style="color:rgba(199,177,134,.7)">·</span><span>PRESENTED LIKE A PREMIERE</span><span style="color:rgba(199,177,134,.7)">·</span><span>PARTNER-NEGOTIATED</span>
+      </div>
+      <div class="reveal" style="display:flex;align-items:center;justify-content:center;gap:22px;margin-top:34px;flex-wrap:wrap">
+        <a href="sell.html" class="btn btn-gold">Sell with C&amp;C&nbsp;&nbsp;→</a>
+        <a href="sell.html" class="link-underline">The full approach</a>
+      </div>
     </div>
   </div>
 </section>
@@ -494,7 +500,6 @@
 
   /* ---------- data ---------- */
   var STILLS = [
-    { src: 'assets/img/still-01-dallas.jpg',    cap: 'Downtown Dallas — from above' },
     { src: 'assets/img/still-02-entry.jpg',     cap: 'Entry — first read' },
     { src: 'assets/img/still-03-console.jpg',   cap: 'Console — detail' },
     { src: 'assets/img/still-04-nook.jpg',      cap: 'Morning light' },
@@ -517,7 +522,7 @@
     b.setAttribute('aria-label', 'View still: ' + s.cap);
     b.innerHTML = '<img loading="lazy" src="' + s.src + '" alt="' + s.cap + '">' +
       '<span class="reel-cap"><span style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,230,215,.85)">' + s.cap + '</span>' +
-      '<span style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:rgba(199,177,134,.8)">' + pad(i + 2) + ' / 11</span></span>';
+      '<span style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:rgba(199,177,134,.8)">' + pad(i + 2) + ' / 10</span></span>';
     b.addEventListener('click', function () { openLb(i); });
     track.insertBefore(b, claimFrame);
   });
@@ -558,53 +563,68 @@
   var queued = false;
   var mqm = window.matchMedia('(max-width:920px)');
 
+  /* Cached geometry — remeasured on resize only, so scroll frames never
+     force layout. Reads and writes are strictly phased. */
+  var geo = { hH: 0, wH: 0, iH: 0, dist: 0, docMax: 0 };
+  function measure() {
+    var vh = window.innerHeight;
+    geo.hH = scOpen.offsetHeight - vh;
+    geo.wH = scWork.offsetHeight - vh;
+    geo.iH = inter.offsetHeight - vh;
+    geo.dist = Math.max(0, track.scrollWidth + 32 - window.innerWidth);
+    geo.docMax = document.documentElement.scrollHeight - vh;
+  }
+
+  var lastCount = '', lastScene = -1, lastTc = '';
+
   function update() {
     queued = false;
+    if (mqm.matches) return;
     var vh = window.innerHeight;
-    var mob = mqm.matches;
 
-    if (!mob) {
-      var max = document.documentElement.scrollHeight - vh;
-      var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      var total = p * RUNTIME;
-      tc.textContent = pad(Math.floor(total / 3600)) + ':' + pad(Math.floor((total % 3600) / 60)) + ':' + pad(Math.floor(total % 60)) + ':' + pad(Math.floor((total % 1) * 24));
+    /* ---- read phase ---- */
+    var hTop = scOpen.getBoundingClientRect().top;
+    var wTop = scWork.getBoundingClientRect().top;
+    var iTop = inter.getBoundingClientRect().top;
+    var tops = sceneEls.map(function (el) { return el.getBoundingClientRect().top; });
+    var y = window.scrollY;
 
-      /* hero beats */
-      var hTotal = scOpen.offsetHeight - vh;
-      var hp = hTotal > 0 ? Math.min(1, Math.max(0, -scOpen.getBoundingClientRect().top / hTotal)) : 0;
-      heroDim.style.opacity = Math.min(0.94, hp * 1.4).toFixed(3);
-      if (!rm) {
-        heroPara.style.scale = (1 - hp * 0.07).toFixed(4);
-        heroVid.style.filter = 'brightness(' + (1 - hp * 0.42).toFixed(3) + ')';
-      }
-      heroB1.style.opacity = Math.max(0, 1 - hp * 2.8).toFixed(3);
-      heroB1.style.transform = 'translateY(' + (-hp * 70).toFixed(1) + 'px)';
-      heroB1.style.visibility = hp > 0.35 ? 'hidden' : 'visible';
-      var q = Math.min(1, Math.max(0, (hp - 0.42) / 0.34));
-      var out = Math.min(1, Math.max(0, (hp - 0.92) / 0.08));
-      heroB2.style.opacity = (q * (1 - out)).toFixed(3);
-      heroB2.style.transform = 'translateY(' + ((1 - q) * 46).toFixed(1) + 'px)';
+    /* ---- compute ---- */
+    var p = geo.docMax > 0 ? Math.min(1, Math.max(0, y / geo.docMax)) : 0;
+    var total = p * RUNTIME;
+    var hp = geo.hH > 0 ? Math.min(1, Math.max(0, -hTop / geo.hH)) : 0;
+    var wp = geo.wH > 0 ? Math.min(1, Math.max(0, -wTop / geo.wH)) : 0;
+    var ip = geo.iH > 0 ? Math.min(1, Math.max(0, -iTop / geo.iH)) : 0;
+    var q = Math.min(1, Math.max(0, (hp - 0.42) / 0.34));
+    var out = Math.min(1, Math.max(0, (hp - 0.92) / 0.08));
+    var g = Math.min(1, ip / 0.72);
+    var e = 1 - Math.pow(1 - g, 3);
+    var mid = vh * 0.5, active = 0;
+    tops.forEach(function (t, i) { if (t <= mid) active = i; });
 
-      /* horizontal reel (desktop: scroll-driven) */
-      var wTotal = scWork.offsetHeight - vh;
-      var wp = wTotal > 0 ? Math.min(1, Math.max(0, -scWork.getBoundingClientRect().top / wTotal)) : 0;
-      var dist = Math.max(0, track.scrollWidth + 32 - window.innerWidth);
-      track.style.transform = 'translate3d(' + (-wp * dist).toFixed(1) + 'px,0,0)';
-      workProg.style.transform = 'scaleX(' + wp.toFixed(4) + ')';
-      workCount.textContent = pad(Math.min(11, Math.floor(wp * 11) + 1)) + ' / 11';
+    /* ---- write phase (compositor-friendly transforms; text only on change) ---- */
+    var tcs = pad(Math.floor(total / 3600)) + ':' + pad(Math.floor((total % 3600) / 60)) + ':' + pad(Math.floor(total % 60)) + ':' + pad(Math.floor((total % 1) * 24));
+    if (tcs !== lastTc) { lastTc = tcs; tc.textContent = tcs; }
 
-      /* intermission scale */
-      var iTotal = inter.offsetHeight - vh;
-      var ip = iTotal > 0 ? Math.min(1, Math.max(0, -inter.getBoundingClientRect().top / iTotal)) : 0;
-      var g = Math.min(1, ip / 0.72);
-      var e = 1 - Math.pow(1 - g, 3);
-      interWrap.style.transform = rm ? 'scale(1)' : 'scale(' + (0.42 + 0.58 * e).toFixed(4) + ')';
-      interCap1.style.opacity = Math.max(0, 1 - g * 1.7).toFixed(3);
-      interCap2.style.opacity = Math.min(1, Math.max(0, (ip - 0.72) / 0.18)).toFixed(3);
+    heroDim.style.opacity = Math.min(0.94, hp * 1.4).toFixed(3);
+    if (!rm) heroPara.style.scale = (1 - hp * 0.07).toFixed(4);
+    heroB1.style.opacity = Math.max(0, 1 - hp * 2.8).toFixed(3);
+    heroB1.style.transform = 'translate3d(0,' + (-hp * 70).toFixed(1) + 'px,0)';
+    heroB1.style.visibility = hp > 0.35 ? 'hidden' : 'visible';
+    heroB2.style.opacity = (q * (1 - out)).toFixed(3);
+    heroB2.style.transform = 'translate3d(0,' + ((1 - q) * 46).toFixed(1) + 'px,0)';
 
-      /* scene tracking */
-      var mid = vh * 0.5, active = 0;
-      sceneEls.forEach(function (el, i) { if (el.getBoundingClientRect().top <= mid) active = i; });
+    track.style.transform = 'translate3d(' + (-wp * geo.dist).toFixed(1) + 'px,0,0)';
+    workProg.style.transform = 'scaleX(' + wp.toFixed(4) + ')';
+    var count = pad(Math.min(10, Math.floor(wp * 10) + 1)) + ' / 10';
+    if (count !== lastCount) { lastCount = count; workCount.textContent = count; }
+
+    interWrap.style.transform = rm ? 'scale(1)' : 'scale(' + (0.42 + 0.58 * e).toFixed(4) + ')';
+    interCap1.style.opacity = Math.max(0, 1 - g * 1.7).toFixed(3);
+    interCap2.style.opacity = Math.min(1, Math.max(0, (ip - 0.72) / 0.18)).toFixed(3);
+
+    if (active !== lastScene) {
+      lastScene = active;
       sceneLabel.textContent = SCENES[active];
       for (var i = 0; i < ticks.length; i++) ticks[i].classList.toggle('on', i <= active);
     }
@@ -620,7 +640,7 @@
       var d = track.scrollWidth - track.clientWidth;
       var sp = d > 0 ? track.scrollLeft / d : 0;
       workProg.style.transform = 'scaleX(' + sp.toFixed(4) + ')';
-      workCount.textContent = pad(Math.min(11, Math.floor(sp * 11) + 1)) + ' / 11';
+      workCount.textContent = pad(Math.min(10, Math.floor(sp * 10) + 1)) + ' / 10';
     });
   }, { passive: true });
 
@@ -635,7 +655,13 @@
   });
   function onScroll() { if (!queued) { queued = true; requestAnimationFrame(update); } }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
+  var resizeT;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(function () { measure(); onScroll(); }, 120);
+  });
+  measure();
+  window.addEventListener('load', function () { measure(); update(); });
   update();
 
   /* ---------- CT clock ---------- */
