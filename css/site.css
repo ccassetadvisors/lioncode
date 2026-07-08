@@ -354,7 +354,7 @@ html{scrollbar-color:#8F7546 #0C0A07}
 /* giant ampersand watermark for contact sections */
 .amp-ghost{position:relative;overflow:hidden}
 .amp-ghost::after{content:'&';position:absolute;right:4%;bottom:-14%;font-family:var(--serif);font-style:italic;font-size:clamp(200px,34vh,420px);line-height:1;color:rgba(199,177,134,.06);pointer-events:none;z-index:0}
-.amp-ghost>*{position:relative;z-index:1}
+.amp-ghost>:not(.embers){position:relative;z-index:1}
 
 /* numbered rows: numeral ignites on hover */
 .row-hover .launch-num,.row-hover>span:first-child{transition:color .4s,transform .4s var(--ease-out)}

@@ -131,19 +131,22 @@
   /* reel title frame centers against the stills */
   #workTrack>div:first-child{height:48svh!important;justify-content:center!important;gap:14px!important}
 
-  /* tighter rhythm into the mirror */
+  /* tighter rhythm into the mirror — the section-wide 76px cap plus the
+     header's own padding stacked into a dead half-screen, so zero the
+     section and let the header/panels carry the spacing */
   #intermission{padding-bottom:40px!important}
-  #sc-mirror>div:first-child{padding:38px var(--pad-x) 34px!important}
-  #mirrorL,#mirrorR{padding:38px var(--pad-x) 44px!important}
+  #sc-mirror{padding-top:0!important;padding-bottom:0!important}
+  #sc-mirror>div:first-child{padding:34px var(--pad-x) 28px!important}
+  #mirrorL,#mirrorR{padding:40px var(--pad-x) 44px!important}
+  #sc-mirror>div:last-child{min-height:0!important}
 
   /* sellers: copy centers on the fire, shorter pin */
   #sc-sellers{height:100svh!important}
   .sell-copy{left:50%!important;top:50%!important;width:min(92vw,680px)!important}
 
-  /* mirror panels: compact */
-  #mirrorL,#mirrorR{padding:44px var(--pad-x)!important}
-  #sc-mirror>div:first-child{padding:56px var(--pad-x) 42px!important}
-  #sc-mirror>div:last-child{min-height:0!important}
+  /* final scene: compact rhythm */
+  #contact{padding-top:60px!important;padding-bottom:52px!important}
+  #contact .notes-box{margin-bottom:52px!important}
 
   /* market notes + close */
   #notesForm{flex-direction:column;gap:10px}
