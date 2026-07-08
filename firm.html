@@ -47,7 +47,27 @@
 </script>
 <style>
 /* editorial partner index — light, airy, typographic */
-.pgrid{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:clamp(36px,6vw,100px);margin-top:64px;align-items:start}
+/* entry state: the trio, equal weight */
+.pteam{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin-top:64px;border-top:1px solid rgba(23,19,13,.12);border-bottom:1px solid rgba(23,19,13,.12)}
+.pteam button{background:none;border:none;text-align:left;cursor:pointer;padding:clamp(30px,4vw,48px) clamp(20px,2.5vw,40px);display:flex;flex-direction:column;gap:14px;position:relative;transition:background .5s}
+.pteam button+button{border-left:1px solid rgba(23,19,13,.12)}
+.pteam button::after{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#8F7546,#C7B186);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease-out)}
+@media (hover:hover){
+  .pteam button:hover{background:rgba(199,177,134,.07)}
+  .pteam button:hover::after{transform:scaleX(1)}
+  .pteam button:hover .pt-go{color:#17130D;letter-spacing:.14em}
+}
+.pt-role{font-family:var(--mono);font-size:9px;letter-spacing:.26em;color:#8F7546;text-transform:uppercase}
+.pt-name{font-family:var(--serif);font-size:clamp(28px,2.6vw,40px);line-height:1.05;letter-spacing:-0.015em;color:#17130D}
+.pt-line{font-family:var(--serif);font-style:italic;font-size:15.5px;line-height:1.5;color:#7A6A4E;flex:1}
+.pt-go{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:#8F7546;transition:color .4s,letter-spacing .4s}
+@media (max-width:920px){
+  .pteam button+button{border-left:none;border-top:1px solid rgba(23,19,13,.12)}
+}
+.pback{background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:#8F7546;padding:0 0 18px;text-align:left;display:flex;align-items:center;gap:8px}
+.pback:hover{color:#17130D}
+.pgrid{display:none;grid-template-columns:minmax(240px,320px) 1fr;gap:clamp(36px,6vw,100px);margin-top:64px;align-items:start}
+.pgrid.open{display:grid;animation:profIn .6s var(--ease-out) both}
 .pnav{position:sticky;top:96px;display:flex;flex-direction:column}
 .pnav button{background:none;border:none;border-top:1px solid rgba(23,19,13,.12);padding:22px 2px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:padding-left .4s var(--ease-out)}
 .pnav button:last-of-type{border-bottom:1px solid rgba(23,19,13,.12)}
@@ -150,8 +170,12 @@
   <div class="wrap-wide">
     <div class="mono-label mono-label--paper">THE PARTNERS</div>
     <h2 class="h-display h-display--paper reveal" style="font-size:clamp(30px,3.6vw,54px);line-height:1.08;margin-top:22px;max-width:860px">Three names. <em>One standard.</em></h2>
-    <div class="pgrid">
-      <nav class="pnav" id="pnav" aria-label="Partners"></nav>
+    <div class="pteam reveal" id="pteam" aria-label="The partners"></div>
+    <div class="pgrid" id="pgrid">
+      <div>
+        <button class="pback" id="pback">← &nbsp;ALL THREE PARTNERS</button>
+        <nav class="pnav" id="pnav" aria-label="Partners"></nav>
+      </div>
       <article class="pprof" id="pprof" aria-live="polite"></article>
     </div>
   </div>
@@ -267,6 +291,28 @@
   ];
 
   var pnav = document.getElementById('pnav'), pprof = document.getElementById('pprof');
+  var pteam = document.getElementById('pteam'), pgrid = document.getElementById('pgrid');
+
+  /* entry state: all three, equal weight */
+  PARTNERS.forEach(function (p, i) {
+    var b = document.createElement('button');
+    b.innerHTML =
+      '<span class="pt-role">' + p.title + '</span>' +
+      '<span class="pt-name">' + p.name + '</span>' +
+      '<span class="pt-line">&ldquo;' + p.quote + '&rdquo;</span>' +
+      '<span class="pt-go">FULL PROFILE&nbsp;&nbsp;→</span>';
+    b.addEventListener('click', function () {
+      pteam.style.display = 'none';
+      pgrid.classList.add('open');
+      showPartner(i);
+    });
+    pteam.appendChild(b);
+  });
+  document.getElementById('pback').addEventListener('click', function () {
+    pgrid.classList.remove('open');
+    pteam.style.display = '';
+  });
+
   function showPartner(i) {
     pnav.querySelectorAll('button').forEach(function (b, j) {
       b.classList.toggle('on', j === i);
@@ -293,7 +339,6 @@
     b.addEventListener('click', function () { showPartner(i); });
     pnav.appendChild(b);
   });
-  showPartner(0);
 
   var BENCH = ['Associate agents', 'Analysts', 'Media & film', 'Legal', 'Lending', 'Title', 'Inspection', 'Commercial trades', 'Brokerage partners'];
   var bench = document.getElementById('bench');

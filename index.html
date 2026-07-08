@@ -101,7 +101,7 @@
   #sc-work{height:auto!important}
   #sc-work>div{position:static!important;height:auto!important;padding:0}
   #sc-work>div>div:first-child{padding:0 var(--pad-x) 16px!important}
-  #workTrack{width:auto!important;overflow-x:auto;transform:none!important;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none;gap:8px!important}
+  #workTrack{width:auto!important;overflow-x:auto;transform:none!important;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-padding:0 var(--pad-x);scrollbar-width:none;gap:8px!important}
   #workTrack::-webkit-scrollbar{display:none}
   #workTrack>div:first-child{width:82vw!important;height:auto!important;padding:0 6vw 8px 0!important;scroll-snap-align:start;justify-content:flex-start!important;gap:12px!important}
   #workTrack>div:last-child{width:86vw!important;height:auto!important;padding:4px 8vw 8px 2px!important;scroll-snap-align:start;justify-content:flex-start!important;gap:14px!important}
@@ -124,6 +124,17 @@
 
   /* bench chips tighter */
   #benchChips span{padding:6px 10px!important;font-size:9px!important}
+
+  /* hero wording rides higher */
+  .hero-center{top:44%!important}
+
+  /* reel title frame centers against the stills */
+  #workTrack>div:first-child{height:48svh!important;justify-content:center!important;gap:14px!important}
+
+  /* tighter rhythm into the mirror */
+  #intermission{padding-bottom:40px!important}
+  #sc-mirror>div:first-child{padding:38px var(--pad-x) 34px!important}
+  #mirrorL,#mirrorR{padding:38px var(--pad-x) 44px!important}
 
   /* sellers: copy centers on the fire, shorter pin */
   #sc-sellers{height:100svh!important}
@@ -199,7 +210,7 @@
 
     <!-- beat 1 -->
     <div id="heroB1" style="position:absolute;inset:0;pointer-events:none;will-change:opacity,transform">
-      <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-56%);display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 clamp(16px,4vw,40px)">
+      <div class="hero-center" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-56%);display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 clamp(16px,4vw,40px)">
         <p class="hero-kicker" style="font-family:var(--mono);font-size:clamp(9px,1vw,11px);letter-spacing:.38em;color:rgba(237,230,215,.6);animation:fadeIn 1.4s .4s both;text-shadow:0 1px 14px rgba(10,8,6,.8);margin:0 0 clamp(18px,3svh,32px)">DALLAS–FORT WORTH · REAL ESTATE ADVISORY</p>
         <h1 style="margin:0;font-weight:400">
           <span style="display:block;overflow:hidden;padding-bottom:.05em"><span class="hero-line" style="display:inline-block;animation:rise 1.2s var(--ease-out) .55s both;font-family:var(--serif);font-size:clamp(36px,min(6.6vw,9.4svh),112px);line-height:1.02;letter-spacing:-0.022em;color:#EDE6D7;text-shadow:0 2px 26px rgba(10,8,6,.75)">The home you live in.</span></span>
@@ -244,11 +255,11 @@
       <div id="workTrack" style="display:flex;align-items:stretch;gap:10px;width:max-content;padding:0 var(--pad-x);will-change:transform">
         <div style="flex:none;width:min(58vw,470px);height:58svh;display:flex;flex-direction:column;justify-content:center;gap:18px;padding-right:5vw">
           <h2 class="h-display" style="font-size:clamp(34px,3.4vw,56px);line-height:1.04;letter-spacing:-0.015em">Homes, <em>as we present them.</em></h2>
-          <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:rgba(237,230,215,.4)">FIVE STILLS · ALL IN-HOUSE</div>
+          <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:rgba(237,230,215,.4)">FIVE FRAMES · ONE STANDARD</div>
         </div>
         <!-- stills injected by JS from STILLS data -->
         <div style="flex:none;width:min(76vw,660px);height:58svh;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:0 4vw">
-          <p style="margin:0;font-family:var(--serif);font-size:clamp(28px,3vw,46px);line-height:1.1;color:#EDE6D7">Film, stills, and social cuts — <em style="color:#C7B186">all produced in-house.</em></p>
+          <p style="margin:0;font-family:var(--serif);font-size:clamp(28px,3vw,46px);line-height:1.1;color:#EDE6D7">Film, stills, and social cuts — <em class="gold-text">every launch gets the full treatment.</em></p>
           <p style="margin:0;font-size:15px;line-height:1.6;color:rgba(237,230,215,.6);max-width:480px">Most firms outsource this. We built a studio instead — every listing launches like a property worth watching, because to someone, it is.</p>
           <a href="sell.html" style="font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#C7B186;text-decoration:none;border-bottom:1px solid rgba(199,177,134,.5);padding-bottom:4px;align-self:flex-start">See a full launch →</a>
         </div>
@@ -336,7 +347,7 @@
     <div style="max-width:620px">
       <div class="reveal" style="font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:rgba(199,177,134,.75)">SC 05 · FOR BUYERS — FIRST-TIMERS WELCOME</div>
       <h2 class="h-display reveal" style="font-size:clamp(40px,4.6vw,74px);line-height:1;letter-spacing:-0.018em;margin-top:24px;text-shadow:0 2px 26px rgba(10,8,6,.7)">Your first home, explained.</h2>
-      <p class="reveal" style="font-family:var(--serif);font-style:italic;font-size:clamp(19px,2vw,25px);line-height:1.4;color:rgba(237,230,215,.85);margin:18px 0 0;text-shadow:0 1px 18px rgba(10,8,6,.8)">"The first home is the scariest money you'll ever spend. We make it make sense."</p>
+      <p class="reveal" style="font-family:var(--serif);font-style:italic;font-size:clamp(19px,2vw,25px);line-height:1.45;color:rgba(237,230,215,.85);margin:18px 0 0;text-shadow:0 1px 18px rgba(10,8,6,.8)">Know your number before you fall in love — every dollar in writing, free, before your first tour.</p>
       <div class="reveal" style="border:1px solid rgba(199,177,134,.4);background:rgba(10,8,6,.5);backdrop-filter:blur(6px);padding:20px 24px;margin-top:36px">
         <div style="font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:#C7B186">THE FIRST-HOME COST CALCULATOR</div>
         <div style="font-size:14px;line-height:1.6;color:rgba(237,230,215,.75);margin-top:8px">Price, down payment, and the real monthly number — free, before you tour a single house.</div>
@@ -375,7 +386,7 @@
 <section id="intermission" style="position:relative;height:260vh;background:#070503">
   <div style="position:sticky;top:0;height:100svh;overflow:hidden;background:#070503;display:flex;align-items:center;justify-content:center">
     <div id="interWrap" style="position:absolute;inset:0;will-change:transform;transform:scale(.42)">
-      <video id="interVid" data-src="assets/video/film.mp4" data-autoplay muted loop playsinline preload="none" poster="assets/img/poster-film.jpg" style="width:100%;height:100%;object-fit:cover"></video>
+      <video id="interVid" data-src="assets/video/film.mp4" data-autoplay autoplay muted loop playsinline preload="none" poster="assets/img/poster-film.jpg" style="width:100%;height:100%;object-fit:cover"></video>
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 120% 100% at 50% 50%,transparent 58%,rgba(7,5,3,.55) 100%)"></div>
     </div>
     <div id="interCap1" style="position:absolute;top:13vh;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:rgba(199,177,134,.65)">INTERMISSION · A LISTING, LAUNCHED</div>
@@ -425,11 +436,12 @@
 
 <!-- ================= SC 08 · CLOSE ================= -->
 <section id="contact" data-scene="7" class="amp-ghost" style="position:relative;background:#0A0806;padding:110px var(--pad-x) 90px">
+  <canvas class="embers" aria-hidden="true"></canvas>
   <div class="wrap-wide">
-    <div class="reveal" style="display:flex;align-items:center;gap:clamp(24px,4vw,60px);border:1px solid rgba(237,230,215,.12);padding:clamp(24px,3.5vw,44px);margin-bottom:96px;flex-wrap:wrap">
+    <div class="reveal notes-box" style="display:flex;align-items:center;gap:clamp(24px,4vw,60px);padding:clamp(24px,3.5vw,44px);margin-bottom:96px;flex-wrap:wrap">
       <div style="flex:1 1 320px">
         <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:rgba(199,177,134,.6);margin-bottom:12px">SC 08 · MARKET NOTES</div>
-        <h2 style="margin:0;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.1;color:#EDE6D7">The DFW market, read closely.</h2>
+        <h2 style="margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(28px,2.6vw,36px);line-height:1.1;color:#EDE6D7">The DFW market, <em class="gold-text">read closely.</em></h2>
         <div style="font-size:14.5px;color:rgba(237,230,215,.62);margin-top:8px">Twice a month, from operators inside it.</div>
       </div>
       <div style="flex:1 1 320px;max-width:520px">
@@ -445,7 +457,7 @@
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:clamp(36px,5vw,76px)">
       <div>
         <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:rgba(199,177,134,.6);margin-bottom:16px">FINAL SCENE · CONTACT</div>
-        <h2 style="margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(34px,3.2vw,48px);line-height:1.04;color:#EDE6D7;max-width:440px">Tell us what you're working on.</h2>
+        <h2 style="margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(36px,3.4vw,52px);line-height:1.06;color:#EDE6D7;max-width:460px">Tell us what <em class="gold-text" style="font-style:italic">you're working on.</em></h2>
         <p style="font-size:15px;line-height:1.6;color:rgba(237,230,215,.62);margin:18px 0 0;max-width:380px">A real person replies within one business day.</p>
         <address style="margin-top:32px;font-style:normal;font-family:var(--mono);font-size:13px;line-height:2.2;color:rgba(237,230,215,.75)">
           <a href="tel:+14694799656" style="color:#C7B186;text-decoration:none">(469) 479-9656</a><br>
@@ -477,8 +489,9 @@
     </div>
 
     <!-- credits footer -->
-    <footer style="border-top:1px solid rgba(237,230,215,.12);margin-top:88px;padding-top:40px;text-align:center">
-      <div style="font-size:12px;color:rgba(237,230,215,.5);line-height:2">C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Broker-led, family-owned<br>Filmed, photographed &amp; presented in-house · Rooted in Dallas–Fort Worth</div>
+    <footer style="border-top:1px solid rgba(237,230,215,.12);margin-top:88px;padding-top:44px;text-align:center">
+      <div class="fin-seal" aria-hidden="true"><svg viewBox="0 0 110 110"><circle cx="55" cy="55" r="53"/><circle class="inner" cx="55" cy="55" r="47"/></svg><span>C<em>&amp;</em>C</span></div>
+      <div style="font-size:12px;color:rgba(237,230,215,.5);line-height:2;margin-top:26px">C&amp;C Asset Advisors — a licensed Texas real estate brokerage · Broker-led, family-owned<br>Filmed, cut &amp; presented in-house · Rooted in Dallas–Fort Worth</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:26px;margin-top:24px;font-size:11.5px;color:rgba(237,230,215,.45);flex-wrap:wrap">
         <a href="https://www.trec.texas.gov/forms/information-about-brokerage-services" target="_blank" rel="noopener" style="color:rgba(237,230,215,.45);text-decoration:underline;text-underline-offset:3px">TREC Information About Brokerage Services</a>
         <a href="https://www.trec.texas.gov/forms/consumer-protection-notice" target="_blank" rel="noopener" style="color:rgba(237,230,215,.45);text-decoration:underline;text-underline-offset:3px">Consumer Protection Notice</a>

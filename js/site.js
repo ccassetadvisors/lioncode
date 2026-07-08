@@ -128,14 +128,15 @@
     vids.forEach(function (v) { if (!v.src && v.getAttribute('data-src')) v.src = v.getAttribute('data-src'); });
   }
 
-  /* one gentle autoplay nudge on first interaction (iOS low-power mode etc.) */
+  /* autoplay nudge on every interaction — lazy videos get their src long
+     after the first touch, so this must stay alive (it is near-free) */
   var nudge = function () {
     document.querySelectorAll('video[autoplay], video[data-autoplay]').forEach(function (v) {
       if (v.src && v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
     });
-    window.removeEventListener('pointerdown', nudge);
   };
   window.addEventListener('pointerdown', nudge, { passive: true });
+  window.addEventListener('touchend', nudge, { passive: true });
 
   /* ---------- inquiry form (FormSubmit, with mailto fallback) ---------- */
   window.CC = window.CC || {};
