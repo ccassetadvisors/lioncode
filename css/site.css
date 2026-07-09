@@ -384,9 +384,10 @@ html{scrollbar-color:#8F7546 #0C0A07}
 .veil-seal circle{fill:none;stroke:rgba(199,177,134,.8);stroke-width:1.2;stroke-dasharray:340;stroke-dashoffset:340;animation:sealDraw 1s var(--ease-out) .1s forwards}
 .veil-seal circle.inner{stroke-dasharray:300;stroke-dashoffset:300;stroke:rgba(199,177,134,.4);animation-delay:.25s}
 @keyframes sealDraw{to{stroke-dashoffset:0}}
-.veil-mark{position:absolute;font-family:var(--serif);font-size:34px;color:#EDE6D7;opacity:0;animation:fadeIn .5s .5s forwards}
+@keyframes veilIn{from{opacity:0}to{opacity:1}}
+.veil-mark{position:absolute;font-family:var(--serif);font-size:34px;color:#EDE6D7;opacity:0;animation:veilIn .45s .18s forwards}
 .veil-mark em{font-style:italic;background:var(--gold-grad);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
-.veil-sub{font-family:var(--mono);font-size:9px;letter-spacing:.44em;color:rgba(199,177,134,.7);opacity:0;animation:fadeIn .5s .7s forwards;padding-left:.44em}
+.veil-sub{font-family:var(--mono);font-size:9px;letter-spacing:.44em;color:rgba(199,177,134,.7);opacity:0;animation:veilIn .5s .5s forwards;padding-left:.44em}
 .veil-line{width:0;height:1px;background:linear-gradient(90deg,transparent,#C7B186,transparent);animation:veilLine .8s var(--ease-out) .45s forwards}
 @keyframes veilLine{to{width:190px}}
 

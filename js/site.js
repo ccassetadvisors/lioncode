@@ -480,7 +480,7 @@
       '<div class="veil-sub">ASSET ADVISORS</div>';
     document.body.appendChild(veil);
     veil.classList.add('pending');
-    setTimeout(function () { veil.classList.add('out'); }, fromPT ? 60 : 1150);
+    setTimeout(function () { veil.classList.add('out'); }, fromPT ? 60 : 1400);
     veil.addEventListener('animationend', function (e) {
       if (e.animationName === 'veilUp') veil.remove();
     });
